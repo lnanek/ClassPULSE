@@ -68,7 +68,7 @@ public class GraphActivity extends BaseActivity {
 
 	private static final String LOG_TAG = GraphActivity.class.getSimpleName();
 
-	private Handler handler;
+	private Handler handler = new Handler();
 
 	private LocationTracker location;
 
@@ -500,6 +500,7 @@ public class GraphActivity extends BaseActivity {
 		} else {
 			Log.d(LOG_TAG, "Not Glass: " + Build.MODEL);
 			glassInstructions.setVisibility(View.GONE);
+			infoBar.setBackgroundColor(Color.parseColor("#007e7a"));
 		}
 
 		// Initialize the graph.
@@ -519,11 +520,7 @@ public class GraphActivity extends BaseActivity {
 			location.startAccquiringLocationData();
 		}
 
-		if (null == handler) {
-			handler = new Handler();
-			handler.post(pollServer);
-			recentlyTriggered = false;
-		}
+		handler.post(pollServer);
 	}
 
 	@Override
