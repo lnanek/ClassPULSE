@@ -18,6 +18,7 @@ import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,6 +47,10 @@ public class GraphActivity extends BaseActivity {
 	private static enum HeadMotion {
 		LEFT, RIGHT, UP, DOWN;
 	}
+	
+	private static final int DOING_GOOD_BAR_COLOR = Color.parseColor("#007e7a");
+
+	private static final int DOING_BAD_BAR_COLOR = Color.parseColor("#cc9900");
 
 	// How long after triggering an understand or don't until you can trigger
 	// again.
@@ -79,6 +84,9 @@ public class GraphActivity extends BaseActivity {
 	private boolean setup;
 
 	private boolean recentlyTriggered;
+	
+	@InjectView(R.id.infoBar)
+	private View infoBar;
 
 	@InjectView(R.id.understandCount)
 	private TextView understandCountView;
@@ -447,6 +455,14 @@ public class GraphActivity extends BaseActivity {
 			understandCountTotalView.setText("Total understand: " + classStatus.totalUnderstand);
 			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.totalDontUnderstand);
 			userCountView.setText(Integer.toString(classStatus.totalStudents));
+			
+			if ( classStatus.totalDontUnderstand > classStatus.totalUnderstand) {
+				infoBar.setBackgroundColor(DOING_BAD_BAR_COLOR);
+				glassInstructions.setBackgroundColor(DOING_BAD_BAR_COLOR);				
+			} else {
+				infoBar.setBackgroundColor(DOING_GOOD_BAR_COLOR);
+				glassInstructions.setBackgroundColor(DOING_GOOD_BAR_COLOR);
+			}
 		}
 	}
 
