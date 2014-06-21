@@ -13,43 +13,8 @@
         android:background="#000"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/titleBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#000"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="20dp" >
-
-            <View
-                android:layout_width="34px"
-                android:layout_height="34px" />
-
-            <View
-                android:layout_width="0px"
-                android:layout_height="0px"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/logo" />
-
-            <View
-                android:layout_width="0px"
-                android:layout_height="0px"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/button_expander" />
-        </LinearLayout>
-
+        <include layout="@layout/title_bar" />
+ 
         <LinearLayout
             android:id="@+id/infoBar"
             android:layout_width="match_parent"
