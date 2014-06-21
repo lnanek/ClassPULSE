@@ -572,7 +572,7 @@ public class GraphActivity extends BaseActivity {
 
 			if (null == handler) {
 				handler = new Handler();
-				handler.postDelayed(pollServer, POLL_PERIOD_MS);
+				handler.post(pollServer);
 				glassStatus.setText(R.string.glass_instructions);
 				recentlyTriggered = false;
 			}
