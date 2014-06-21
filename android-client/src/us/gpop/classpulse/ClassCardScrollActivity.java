@@ -5,10 +5,11 @@ import java.util.List;
 
 import us.gpop.classpulse.device.ScreenWaker;
 import us.gpop.classpulse.network.ApiClient;
-import us.gpop.classpulse.network.ClassStatus;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
+import us.gpop.classpulse.network.ClassStatus;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import com.google.android.glass.app.Card;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
+import com.google.glass.widget.SliderView;
 
 public class ClassCardScrollActivity extends Activity implements
 		AdapterView.OnItemClickListener {
@@ -36,10 +38,19 @@ public class ClassCardScrollActivity extends Activity implements
 		screenWaker = new ScreenWaker(this);
 		
 		super.onCreate(savedInstanceState);
+		
 		client.getClassList();
+		
 		mCardScrollView = new CardScrollView(this);
 		adapter = new ClassCardScrollAdapter();
-		setContentView(R.layout.card_loader);
+
+		if (Build.MODEL.toUpperCase().contains("GLASS")) {
+			setContentView(R.layout.card_loader_glass);			
+			SliderView mIndeterm = (SliderView) findViewById(R.id.indeterm_slider);
+		    mIndeterm.startIndeterminate();
+		} else {
+			setContentView(R.layout.card_loader);
+		}
 	}	
 
 	@Override
