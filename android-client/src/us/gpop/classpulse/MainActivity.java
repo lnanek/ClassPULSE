@@ -1,5 +1,6 @@
 package us.gpop.classpulse;
 
+import us.gpop.classpulse.ApiClient.ApiClientListener;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
@@ -44,6 +45,8 @@ public class MainActivity extends Activity {
 	
 	private int dontUnderstandCount;
 	
+	private ApiClient client = new ApiClient();
+	
 	private DetectorListener detectorListener = new DetectorListener() {
 		@Override
 		public void onSwipeDownOrBack() {
@@ -64,6 +67,19 @@ public class MainActivity extends Activity {
 		public void onTap() {
 		}
 	};
+	
+	private ApiClientListener clientListener = new ApiClientListener() {
+
+		@Override
+		public void onSendSuccess() {
+			Log.i(LOG_TAG, "onSendSuccess");
+		}
+
+		@Override
+		public void onSendFail() {
+			Log.i(LOG_TAG, "onSendFail");
+		}		
+	};
 		
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {		
 		@Override
@@ -75,12 +91,14 @@ public class MainActivity extends Activity {
 			if ( Math.abs(gyroSum[0]) > NOD_TRIGGER_SUM) {
 				gyroSum[0] = 0;
 				understandCount++;
+				client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
 				updateUi();
 			}
 			
 			if ( Math.abs(gyroSum[1]) > SHAKE_TRIGGER_SUM) {
 				gyroSum[1] = 0;
 				dontUnderstandCount++;
+				client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
 				updateUi();
 			}
 		}
