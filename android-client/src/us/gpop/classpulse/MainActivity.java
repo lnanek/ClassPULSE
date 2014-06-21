@@ -2,6 +2,8 @@ package us.gpop.classpulse;
 
 import java.util.ArrayList;
 
+import roboguice.activity.RoboActivity;
+import roboguice.inject.InjectView;
 import us.gpop.classpulse.device.Detector;
 import us.gpop.classpulse.device.DetectorListener;
 import us.gpop.classpulse.device.DeviceEmail;
@@ -12,7 +14,6 @@ import us.gpop.classpulse.network.ApiClient.ApiClientListener;
 import us.gpop.classpulse.network.ClassStatus;
 import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -27,7 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends RoboActivity {
 	
 	private static class GlassSetup {
 		private static Detector setup(final DetectorListener listener, Context context) {
@@ -59,30 +60,41 @@ public class MainActivity extends Activity {
 	
 	private boolean setup;
 	
+	@InjectView(R.id.understandCount)
 	private TextView understandCountView;
 	
+	@InjectView(R.id.dontUnderstandCount)
 	private TextView dontUnderstandCountView;
 
+	@InjectView(R.id.understandCountTotal)
 	private TextView understandCountTotalView;
 	
+	@InjectView(R.id.dontUnderstandCountTotal)
 	private TextView dontUnderstandCountTotalView;
 	
+	@InjectView(R.id.userCount)
 	private TextView userCountView;
 	
+	@InjectView(R.id.titleBar)
 	private View titleBar;
 	
+	@InjectView(R.id.classTitle)
 	private TextView classTitle;
 	
 	private int understandCount;
 	
 	private int dontUnderstandCount;
 	
+	@InjectView(R.id.glassInstructions)
 	private View glassInstructions;
 	
+	@InjectView(R.id.androidButtons)
 	private View androidButtons;
 
+	@InjectView(R.id.understandButton)
 	private View understandButton;
 
+	@InjectView(R.id.dontUnderstandButton)
 	private View dontUnderstandButton;
 	
 	private String className = "ADV 320F";
@@ -209,16 +221,6 @@ public class MainActivity extends Activity {
 		}
 		
 		setContentView(R.layout.activity_main);	
-		titleBar = findViewById(R.id.titleBar);
-		understandCountView = (TextView) findViewById(R.id.understandCount);
-		dontUnderstandCountView = (TextView) findViewById(R.id.dontUnderstandCount);
-		dontUnderstandCountTotalView = (TextView) findViewById(R.id.dontUnderstandCountTotal);
-		understandCountTotalView = (TextView) findViewById(R.id.understandCountTotal);
-		userCountView = (TextView) findViewById(R.id.userCount);
-		glassInstructions = findViewById(R.id.glassInstructions);
-		androidButtons = findViewById(R.id.androidButtons);
-		understandButton = findViewById(R.id.understandButton);
-		classTitle = (TextView) findViewById(R.id.classTitle);
 		classTitle.setText(className);
 		
 		understandButton.setOnClickListener(new OnClickListener() {
@@ -227,7 +229,6 @@ public class MainActivity extends Activity {
 				onUnderstand();
 			}
 		});
-		dontUnderstandButton = findViewById(R.id.dontUnderstandButton);
 		dontUnderstandButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
