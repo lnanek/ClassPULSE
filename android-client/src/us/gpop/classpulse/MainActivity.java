@@ -23,6 +23,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -186,6 +188,9 @@ public class MainActivity extends Activity {
 		Log.i(LOG_TAG, "onCreate");
 		screenWaker = new ScreenWaker(this);
 		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
 		super.onCreate(savedInstanceState);
 		
 		// Parse response to voice prompt, if any
