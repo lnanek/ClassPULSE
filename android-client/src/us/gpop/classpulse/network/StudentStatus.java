@@ -1,7 +1,10 @@
 package us.gpop.classpulse.network;
 
-
-public class ApiMessage {
+/**
+ * The student status reported by the Glass to the server.
+ *
+ */
+public class StudentStatus {
 
 	public int understandCount;
 	

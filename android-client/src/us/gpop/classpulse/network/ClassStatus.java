@@ -2,7 +2,11 @@ package us.gpop.classpulse.network;
 
 import com.google.gson.Gson;
 
-public class ServerResponse {
+/**
+ * The class status the server returns with the entire class aggregate numbers.
+ *
+ */
+public class ClassStatus {
 	
 	private static transient final Gson gson = new Gson();
 

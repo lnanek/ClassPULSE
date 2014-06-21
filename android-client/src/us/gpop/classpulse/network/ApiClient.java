@@ -1,13 +1,19 @@
 package us.gpop.classpulse.network;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import us.gpop.classpulse.sensors.LocationTracker;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -15,7 +21,7 @@ import com.google.gson.Gson;
 public class ApiClient {
 
 	public interface ApiClientListener {
-		void onSendSuccess(ServerResponse result);
+		void onSendSuccess(ClassStatus result);
 
 		void onSendFail();
 	}
@@ -24,9 +30,24 @@ public class ApiClient {
 
 	public static final String UPLOAD_URL = "http://gpop-server.com/classpulse/post.php";
 
-	final Gson gson = new Gson();
+	private final Gson gson = new Gson();
+	
+	private final DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+	
+	private Long lastSendUptimeMillis;
+	
+	private boolean isSending;
+	
+	private Handler uiHandler = new Handler();
+	
+	private ApiClientListener listener;
 
-	public ApiClient() {
+	public ApiClient(final ApiClientListener listener) {
+		this.listener = listener;
+	}
+	
+	public boolean isSending() {
+		return isSending;
 	}
 
 	public void sendToServer(
@@ -34,10 +55,12 @@ public class ApiClient {
 			final int dontUnderstandCount,
 			final LocationTracker locationTracker,
 			final String email,
-			final String className,
-			final ApiClientListener listener) {
+			final String className) {
+		
+		isSending = true;
+		lastSendUptimeMillis = SystemClock.uptimeMillis();
 
-		final ApiMessage message = new ApiMessage();
+		final StudentStatus message = new StudentStatus();
 		message.understandCount = understandCount;
 		message.dontUnderstandCount = dontUnderstandCount;
 		if (locationTracker.hasLocation()) {
@@ -56,28 +79,55 @@ public class ApiClient {
 			public void run() {
 
 				try {
-					HttpPost httpPost = new HttpPost(UPLOAD_URL);
-
-					StringEntity params = new StringEntity(json);
+					final HttpPost httpPost = new HttpPost(UPLOAD_URL);
+					final StringEntity params = new StringEntity(json);
 					httpPost.setEntity(params);
+					final HttpResponse response = defaultHttpClient.execute(httpPost);
+					
+					final int statusCode = response.getStatusLine().getStatusCode();
+					Log.d(LOG_TAG, "Response status: " + statusCode);
+					if (HttpStatus.SC_OK != statusCode) {
+						Log.d(LOG_TAG, "There was a problem uploading, response code: " + statusCode);
+						deliverErrorOnUiThread();
+						return;
+					}
+					
+					final InputStream is = response.getEntity().getContent();
+					final String returnedString = IOUtils.toString(is, "UTF-8");
+					Log.d(LOG_TAG, "Server returned: " + returnedString);
+					
+					final int firstIndexOfCurlyBraceOpen = returnedString.indexOf('{');
+					final String returnedJson = returnedString.substring(firstIndexOfCurlyBraceOpen);
 
-					DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
-					HttpResponse response = defaultHttpClient.execute(httpPost);
-					Log.d(LOG_TAG, "Response status: " + response.getStatusLine());
-					
-					ServerResponse result = gson.fromJson ( 
-							new InputStreamReader(response.getEntity().getContent()), 
-							ServerResponse.class );
-					
-					listener.onSendSuccess(result);
+					Log.d(LOG_TAG, "Parsing: " + returnedJson);
+										
+					// Deliver success with parsed response
+					final ClassStatus result = gson.fromJson (returnedJson, ClassStatus.class );
+					uiHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							isSending = false;
+							listener.onSendSuccess(result);
+						}						
+					});		
 
 				} catch (Exception e) {
 					Log.d(LOG_TAG, "There was a problem uploading: " + e.toString());
-					listener.onSendFail();
+					deliverErrorOnUiThread();
 				}
 			}
 		});
 		uploadThread.start();
+	}
+	
+	private void deliverErrorOnUiThread() {
+		uiHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				isSending = false;
+				listener.onSendFail();
+			}						
+		});		
 	}
 
 }

@@ -6,14 +6,15 @@ import us.gpop.classpulse.device.DeviceEmail;
 import us.gpop.classpulse.device.ScreenWaker;
 import us.gpop.classpulse.device.SwipeDetector;
 import us.gpop.classpulse.network.ApiClient;
-import us.gpop.classpulse.network.ServerResponse;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
+import us.gpop.classpulse.network.ClassStatus;
 import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,11 +29,15 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	private static final int POLL_PERIOD_MS = 5 * 1000;
+	
 	private static final float NOD_TRIGGER_SUM = 25;
 
 	private static final float SHAKE_TRIGGER_SUM = 25;
 
 	private static final String LOG_TAG = MainActivity.class.getSimpleName();
+	
+	private Handler handler = new Handler();
 
 	private LocationTracker location;
 	
@@ -70,9 +75,29 @@ public class MainActivity extends Activity {
 
 	private View dontUnderstandButton;
 	
-	private ApiClient client = new ApiClient();
+	private String className = "ADV 320F";
+		
+	private ClassStatus classStatus;
 	
-	private ServerResponse result;
+	private Runnable pollServer = new Runnable() {
+		@Override
+		public void run() {
+			Log.i(LOG_TAG, "pollServer#run");
+			
+			// Poll the server if we aren't currently sending something
+			if (!client.isSending()) {
+				Log.i(LOG_TAG, "polling server...");
+				client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
+			} else {
+				Log.i(LOG_TAG, "skipping poll...");				
+			}
+			
+			// Run again later
+			if ( null != handler ) {
+				handler.postDelayed(this, POLL_PERIOD_MS);
+			}
+		}		
+	};
 	
 	private DetectorListener detectorListener = new DetectorListener() {
 		@Override
@@ -100,9 +125,9 @@ public class MainActivity extends Activity {
 	private ApiClientListener clientListener = new ApiClientListener() {
 
 		@Override
-		public void onSendSuccess(ServerResponse result) {
+		public void onSendSuccess(ClassStatus result) {
 			Log.i(LOG_TAG, "onSendSuccess result = " + result);
-			MainActivity.this.result = result;
+			MainActivity.this.classStatus = result;
 		}
 
 		@Override
@@ -110,6 +135,8 @@ public class MainActivity extends Activity {
 			Log.i(LOG_TAG, "onSendFail");
 		}		
 	};
+	
+	private ApiClient client = new ApiClient(clientListener);
 		
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {		
 		@Override
@@ -133,7 +160,7 @@ public class MainActivity extends Activity {
 		Log.i(LOG_TAG, "onUnderstand");
 		
 		understandCount++;
-		client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
+		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
 		updateUi();		
 	}
 	
@@ -141,7 +168,7 @@ public class MainActivity extends Activity {
 		Log.i(LOG_TAG, "onDontUnderstand");
 		
 		dontUnderstandCount++;
-		client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
+		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
 		updateUi();		
 	}
 	
@@ -202,10 +229,10 @@ public class MainActivity extends Activity {
 		
 		understandCountView.setText("Understand: " + understandCount);
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
-		if (null != result) {
-			understandCountTotalView.setText("Total understand: " + result.understandTotal);
-			dontUnderstandCountTotalView.setText("Total don't: " + result.dontUnderstandTotal);
-			userCountView.setText(Integer.toString(result.studentsTotal));
+		if (null != classStatus) {
+			understandCountTotalView.setText("Total understand: " + classStatus.understandTotal);
+			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.dontUnderstandTotal);
+			userCountView.setText(Integer.toString(classStatus.studentsTotal));
 		}
 	}
 
@@ -258,6 +285,11 @@ public class MainActivity extends Activity {
 				tracker = null;
 			}
 			
+			if ( null != handler ) {
+				handler.removeCallbacksAndMessages(null);
+				handler = null;
+			}
+			
 			return;
 		}
 		
@@ -274,8 +306,12 @@ public class MainActivity extends Activity {
 				tracker = new FilteredOrientationTracker(this, trackerListener);
 				tracker.onResume();
 			}
+			
+			if ( null == handler ) {
+				handler = new Handler();
+				handler.postDelayed(pollServer, POLL_PERIOD_MS);
+			}
 		}
 	}
-	
-	
+		
 }
