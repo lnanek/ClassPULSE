@@ -7,7 +7,6 @@ import us.gpop.classpulse.adapters.ClassAdapter;
 import us.gpop.classpulse.network.ApiClient;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
 import us.gpop.classpulse.network.ClassStatus;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -22,7 +21,7 @@ public class MainActivity extends BaseActivity {
 	protected void onCreate(android.os.Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (isGlass()) {
-			startActivity(new Intent(this, GraphActivity.class));
+			startActivity(new Intent(this, ClassCardScrollActivity.class));
 			finish();
 			return;
 		}

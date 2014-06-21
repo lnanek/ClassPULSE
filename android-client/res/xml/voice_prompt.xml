@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <trigger keyword="@string/voice_prompt" >
 
-    <input prompt="which class?" />
-
     <constraints microphone="true" network="true" />
 
 </trigger>
