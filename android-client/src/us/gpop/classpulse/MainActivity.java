@@ -10,6 +10,8 @@ public class MainActivity extends Activity {
 
 	private LocationTracker location;
 	
+	private ScreenWaker screenWaker;
+	
 	private String email;
 	
 	private boolean resumed;
@@ -19,6 +21,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(LOG_TAG, "onCreate");
+		screenWaker = new ScreenWaker(this);
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);		
@@ -34,6 +37,7 @@ public class MainActivity extends Activity {
 		super.onResume();
 		resumed = true;
 		setupOrCleanup();
+		screenWaker.onResume();
 	}
 
 	@Override
@@ -51,6 +55,7 @@ public class MainActivity extends Activity {
 		super.onPause();		
 		resumed = false;
 		setupOrCleanup();
+		screenWaker.onPause();
 	}
 	
 	/**
