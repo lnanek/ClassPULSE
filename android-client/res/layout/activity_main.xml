@@ -90,13 +90,26 @@
 	        />    
     </LinearLayout>
     
+	<FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+	    android:layout_weight="1"  
+	    >
+    <LinearLayout
+        android:id="@+id/graph_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:orientation="vertical"
+        />	
+	
 	<LinearLayout 
+        android:id="@+id/debugReadings"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical"   
-	    android:layout_weight="1"  
 	    android:background="@drawable/grid_opaque"
 	    android:gravity="center"
+	    android:alpha="0"
 	    > 	
 	    <TextView
 	        android:id="@+id/understandCount"
@@ -139,6 +152,8 @@
 	        android:paddingRight="10dp"
 	        />
     </LinearLayout>
+    
+	</FrameLayout>
 
 	<LinearLayout 
 	    android:id="@+id/glassInstructions"

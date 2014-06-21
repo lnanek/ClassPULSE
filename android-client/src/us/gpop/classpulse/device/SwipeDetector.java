@@ -37,6 +37,7 @@ public class SwipeDetector implements Detector {
 				if (gesture == Gesture.TAP) {
 					Log.d(TAG, "gesture == Gesture.TAP");
 					// do something on tap
+					mListener.onTap();
 					return true;
 				} else if (gesture == Gesture.TWO_TAP) {
 					Log.d(TAG, "gesture == Gesture.TWO_TAP");
