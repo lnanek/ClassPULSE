@@ -4,26 +4,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:keepScreenOn="true"
-    android:background="#333333"
+    android:background="#007e7a"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     >
 
 	<LinearLayout 
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal"
-	    android:paddingBottom="5dp"
+	    android:paddingTop="10dp"
+	    android:paddingBottom="10dp"
+	    android:paddingLeft="20dp"
+	    android:paddingRight="20dp"
 	    android:gravity="center"
 	    >    
+	    <ImageView
+	        android:layout_width="34px"
+	        android:layout_height="34px"
+	        android:layout_marginRight="20dp"
+	        android:src="@drawable/icon_book"	        
+	        />
 	    <TextView
 	        android:id="@+id/classTitle"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="ADV 320F"
-	        android:textSize="30dp"
+	        android:textSize="20dp"
 	        android:textColor="#FFF"
 	        />
 	    <View
@@ -34,15 +41,15 @@
 	    <ImageView
 	        android:layout_width="34px"
 	        android:layout_height="34px"
-	        android:layout_marginRight="5dp"
-	        android:src="@drawable/head_icon"	        
+	        android:layout_marginRight="20dp"
+	        android:src="@drawable/icon_human"	        
 	        />
 	    <TextView
 	        android:id="@+id/userCount"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="0"
-	        android:textSize="30dp"
+	        android:textSize="20dp"
 	        android:textColor="#FFF"
 	        />    
     </LinearLayout>
