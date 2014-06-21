@@ -1,17 +1,29 @@
 package us.gpop.classpulse;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+	
+	private static class GlassSetup {
+		private static Detector setup(final DetectorListener listener, Context context) {
+			return new SwipeDetector(listener, context);
+		}
+	}
 	
 	private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
 	private LocationTracker location;
 	
 	private ScreenWaker screenWaker;
+	
+	private Detector swipes;
 	
 	private String email;
 	
@@ -27,6 +39,27 @@ public class MainActivity extends Activity {
 	
 	private int dontUnderstandCount;
 	
+	private DetectorListener detectorListener = new DetectorListener() {
+		@Override
+		public void onSwipeDownOrBack() {
+			finish();
+		}
+		@Override
+		public void onSwipeForwardOrVolumeUp() {
+			understandCount++;
+			updateUi();
+		}
+
+		@Override
+		public void onSwipeBackOrVolumeDown() {
+			dontUnderstandCount++;
+			updateUi();
+		}
+		@Override
+		public void onTap() {
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(LOG_TAG, "onCreate");
@@ -41,8 +74,21 @@ public class MainActivity extends Activity {
 		Log.i(LOG_TAG, "user email = " + email);
 		
 		updateUi();
+		
+		if (Build.MODEL.toUpperCase().contains("GLASS")) {
+				Log.d(LOG_TAG, "Glass detected, tracking side touch pad events...");
+			swipes = GlassSetup.setup(detectorListener, this);
+		} else {
+				Log.d(LOG_TAG, "Not Glass: " + Build.MODEL);
+		}
 	}
-	
+		
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent event) {		
+		swipes.onGenericMotionEvent(event);
+		return super.onGenericMotionEvent(event);
+	}
+
 	private void updateUi() {
 		understandCountView.setText("Understand: " + understandCount);
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
