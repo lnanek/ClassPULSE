@@ -39,9 +39,7 @@ public class ApiClient {
 	private final Gson gson = new Gson();
 	
 	private final DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
-	
-	private Long lastSendUptimeMillis;
-	
+		
 	private boolean isSending;
 	
 	private Handler uiHandler = new Handler();
@@ -64,7 +62,6 @@ public class ApiClient {
 			final String className) {
 		
 		isSending = true;
-		lastSendUptimeMillis = SystemClock.uptimeMillis();
 
 		final StudentStatus message = new StudentStatus();
 		message.understandCount = understandCount;

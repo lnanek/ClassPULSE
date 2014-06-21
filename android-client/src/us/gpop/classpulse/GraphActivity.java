@@ -35,7 +35,7 @@ import android.widget.TextView;
 import com.google.android.glass.media.Sounds;
 import com.google.inject.Inject;
 
-public class GraphActivity extends RoboActivity {
+public class GraphActivity extends BaseActivity {
 
 	private static class GlassSetup {
 		private static Detector setup(final DetectorListener listener, Context context) {
@@ -133,6 +133,8 @@ public class GraphActivity extends RoboActivity {
 	
 	@Inject
 	private AudioManager audioManager;
+	
+	private boolean isShowingDebugReadings;
 
 	private Runnable pollServer = new Runnable() {
 		@Override
@@ -176,7 +178,7 @@ public class GraphActivity extends RoboActivity {
 		@Override
 		public void onTap() {
 			Log.i(LOG_TAG, "onTap");
-			debugReadings.setAlpha(0.5f);
+			toggleDisplayingDebugReading();
 		}
 	};
 
@@ -279,6 +281,20 @@ public class GraphActivity extends RoboActivity {
 		}
 	};
 
+	private void toggleDisplayingDebugReading() {
+		Log.i(LOG_TAG, "toggleDisplayingDebugReading");
+		
+		audioManager.playSoundEffect(Sounds.TAP);
+			
+		if (!isShowingDebugReadings) {
+			debugReadings.setAlpha(0.5f);
+			isShowingDebugReadings = true;
+		} else {
+			debugReadings.setAlpha(0f);				
+			isShowingDebugReadings = false;
+		}
+	}
+	
 	private void onUnderstand() {
 		Log.i(LOG_TAG, "onUnderstand");			
 		if (recentlyTriggered) {

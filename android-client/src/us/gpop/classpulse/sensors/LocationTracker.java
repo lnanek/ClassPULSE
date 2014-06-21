@@ -61,6 +61,7 @@ public class LocationTracker {
 			locationListener.onLocationChanged(lastKnownLocation);
 		}
 		for (final String provider : providers) {
+			Log.d(TAG, "requestLocationUpdates: " + provider);
 			locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
 		}
 	}

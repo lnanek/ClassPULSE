@@ -13,7 +13,7 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.ListView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
 	public static final String LOG_TAG = MainActivity.class.getSimpleName();
 	private ClassAdapter adapter;
@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		if (isGlass()) {
 			startActivity(new Intent(this, GraphActivity.class));
+			finish();
 			return;
 		}
 		setContentView(R.layout.activity_main);
