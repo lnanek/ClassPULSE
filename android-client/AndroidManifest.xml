@@ -35,8 +35,8 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/voice_prompt" />
         </activity>
-        
-        <activity android:name="us.gpop.classpulse.MainActivity" >
+        <activity android:name="us.gpop.classpulse.MainActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
