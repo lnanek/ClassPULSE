@@ -116,7 +116,7 @@ public class MainActivity extends RoboActivity {
 
 	private String className = "ADV 320F";
 
-	private ClassStatus classStatus;
+	private Graph graph;
 
 	private Runnable pollServer = new Runnable() {
 		@Override
@@ -167,13 +167,8 @@ public class MainActivity extends RoboActivity {
 
 		@Override
 		public void onSendSuccess(Graph result) {
-			Log.i(LOG_TAG, "onSendSuccess result = " + result);
-
-			if ( null == result || null == result.graph || result.graph.isEmpty() ) {
-				return;
-			}
-			
-			MainActivity.this.classStatus = result.graph.get(result.graph.size() - 1);
+			Log.i(LOG_TAG, "onSendSuccess result = " + result);			
+			MainActivity.this.graph = result;;
 			updateUi();
 		}
 
@@ -374,6 +369,11 @@ public class MainActivity extends RoboActivity {
 
 		understandCountView.setText("Understand: " + understandCount);
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
+		
+		if ( null == graph || null == graph.graph || graph.graph.isEmpty() ) {
+			return;
+		}
+		final ClassStatus classStatus = graph.graph.get(graph.graph.size() - 1);
 		if (null != classStatus) {
 			understandCountTotalView.setText("Total understand: " + classStatus.totalUnderstand);
 			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.totalDontUnderstand);
