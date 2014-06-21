@@ -63,7 +63,7 @@ public class ApiClient {
 		final StudentStatus message = new StudentStatus();
 		message.understandCount = understandCount;
 		message.dontUnderstandCount = dontUnderstandCount;
-		if (locationTracker.hasLocation()) {
+		if (null != locationTracker && locationTracker.hasLocation()) {
 			message.lat = locationTracker.getLatitude();
 			message.lon = locationTracker.getLongitude();
 		}
