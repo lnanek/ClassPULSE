@@ -1,10 +1,10 @@
 package us.gpop.classpulse.network;
 
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
@@ -77,12 +77,13 @@ public class ApiClient {
 		final Thread uploadThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-
+				final HttpPost httpPost = new HttpPost(UPLOAD_URL);
+				HttpResponse response = null;
+				HttpEntity entity = null;
 				try {
-					final HttpPost httpPost = new HttpPost(UPLOAD_URL);
 					final StringEntity params = new StringEntity(json);
 					httpPost.setEntity(params);
-					final HttpResponse response = defaultHttpClient.execute(httpPost);
+					response = defaultHttpClient.execute(httpPost);
 					
 					final int statusCode = response.getStatusLine().getStatusCode();
 					Log.d(LOG_TAG, "Response status: " + statusCode);
@@ -92,7 +93,9 @@ public class ApiClient {
 						return;
 					}
 					
-					final InputStream is = response.getEntity().getContent();
+					entity = response.getEntity();
+					
+					final InputStream is = entity.getContent();
 					final String returnedString = IOUtils.toString(is, "UTF-8");
 					Log.d(LOG_TAG, "Server returned: " + returnedString);
 					
@@ -112,8 +115,17 @@ public class ApiClient {
 					});		
 
 				} catch (Exception e) {
-					Log.d(LOG_TAG, "There was a problem uploading: " + e.toString());
+					Log.d(LOG_TAG, "There was a problem uploading", e);
 					deliverErrorOnUiThread();
+				} finally {
+					if ( null != entity ) {
+						try {
+							entity.consumeContent();
+						} catch (IOException e) {
+							Log.d(LOG_TAG, "Error closing connection", e);
+						}
+					}					
+					httpPost.abort();
 				}
 			}
 		});

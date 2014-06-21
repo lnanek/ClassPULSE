@@ -42,9 +42,9 @@ public class MainActivity extends RoboActivity {
 
 	private static final int POLL_PERIOD_MS = 5 * 1000;
 
-	private static final float NOD_TRIGGER_SUM = 25;
+	private static final float NOD_TRIGGER_SUM = 20;
 
-	private static final float SHAKE_TRIGGER_SUM = 25;
+	private static final float SHAKE_TRIGGER_SUM = 20;
 
 	private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -172,9 +172,9 @@ public class MainActivity extends RoboActivity {
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {
 		@Override
 		public void onUpdate(float[] gyro, float[] gyroSum) {
-			Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = "
-					+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " +
-					gyroSum[0]);
+			//Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = "
+			//		+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " +
+			//		gyroSum[0]);
 
 			// Check if we have a new head motion
 			HeadMotion newHeadMotion = null;
@@ -231,7 +231,7 @@ public class MainActivity extends RoboActivity {
 				return;
 			}
 
-			Log.i(LOG_TAG, "saving motion to check against next");
+			//Log.i(LOG_TAG, "saving motion to check against next");
 			lastHeadMotion = newHeadMotion;
 		}
 	};
@@ -396,9 +396,11 @@ public class MainActivity extends RoboActivity {
 				location.startAccquiringLocationData();
 			}
 
-			if (null == tracker) {
-				tracker = new FilteredOrientationTracker(this, trackerListener);
-				tracker.onResume();
+			if (Build.MODEL.toUpperCase().contains("GLASS")) {
+				if (null == tracker) {
+					tracker = new FilteredOrientationTracker(this, trackerListener);
+					tracker.onResume();
+				}
 			}
 
 			if (null == handler) {
