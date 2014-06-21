@@ -10,12 +10,14 @@ import us.gpop.classpulse.network.ClassStatus;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 
 public class MainActivity extends BaseActivity {
 
 	public static final String LOG_TAG = MainActivity.class.getSimpleName();
 	private ClassAdapter adapter;
+	private ListView listView;
 
 	@Override
 	protected void onCreate(android.os.Bundle savedInstanceState) {
@@ -26,10 +28,8 @@ public class MainActivity extends BaseActivity {
 			return;
 		}
 		setContentView(R.layout.activity_main);
-		client.getClassList();
-		adapter = new ClassAdapter(this, new ArrayList<ClassStatus>());
-		ListView listView = (ListView) findViewById(R.id.class_list);
-		listView.setAdapter(adapter);
+		client.getClassList();		
+		listView = (ListView) findViewById(R.id.class_list);
 	};
 
 	private ApiClientListener classListListener = new ApiClientListener() {
@@ -38,9 +38,22 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void onSendSuccess(Object result) {
 			List<ClassStatus> classModelList = (List<ClassStatus>) result;
-			for (int i = 0; i < classModelList.size(); i++) {
-				adapter.addAll(classModelList);
-			}
+			Log.i(LOG_TAG, "onSendSuccess = " + classModelList);
+
+			findViewById(R.id.progress).setVisibility(View.GONE);
+			
+			final ArrayList<ClassStatus> array = new ArrayList<ClassStatus>();
+			array.addAll(classModelList);
+			array.add(new ClassStatus());
+			
+			adapter = new ClassAdapter(MainActivity.this, array);
+			
+			//for (int i = 0; i < classModelList.size(); i++) {
+				//Log.i(LOG_TAG, "adapter.addAll <= " + classModelList);
+				//adapter.addAll(classModelList);
+			//}
+			adapter.notifyDataSetChanged();
+			listView.setAdapter(adapter);
 		}
 
 		@Override

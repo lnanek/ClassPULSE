@@ -144,6 +144,8 @@ public class ApiClient {
 		final Thread getClassListThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				Log.d(LOG_TAG, "getClassList");
+				
 				HttpEntity entity = null;
 				try {
 					final HttpGet httpGet = new HttpGet(CLASS_LIST_URL);
