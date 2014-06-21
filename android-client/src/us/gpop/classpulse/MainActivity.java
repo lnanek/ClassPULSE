@@ -16,6 +16,7 @@ import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +41,11 @@ public class MainActivity extends RoboActivity {
 		LEFT, RIGHT, UP, DOWN;
 	}
 
+	// How long after triggering an understand or don't until you can trigger
+	// again.
+	private static final int TRIGGER_BREAK_MS = 5 * 1000;
+
+	// How long to wait before checking the server for the latest totals
 	private static final int POLL_PERIOD_MS = 5 * 1000;
 
 	private static final float NOD_TRIGGER_SUM = 20;
@@ -66,6 +72,8 @@ public class MainActivity extends RoboActivity {
 
 	private boolean setup;
 
+	private boolean recentlyTriggered;
+
 	@InjectView(R.id.understandCount)
 	private TextView understandCountView;
 
@@ -80,6 +88,9 @@ public class MainActivity extends RoboActivity {
 
 	@InjectView(R.id.userCount)
 	private TextView userCountView;
+
+	@InjectView(R.id.glassStatus)
+	private TextView glassStatus;
 
 	@InjectView(R.id.titleBar)
 	private View titleBar;
@@ -98,10 +109,10 @@ public class MainActivity extends RoboActivity {
 	private View androidButtons;
 
 	@InjectView(R.id.understandButton)
-	private View understandButton;
+	private TextView understandButton;
 
 	@InjectView(R.id.dontUnderstandButton)
-	private View dontUnderstandButton;
+	private TextView dontUnderstandButton;
 
 	private String className = "ADV 320F";
 
@@ -172,9 +183,14 @@ public class MainActivity extends RoboActivity {
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {
 		@Override
 		public void onUpdate(float[] gyro, float[] gyroSum) {
-			//Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = "
-			//		+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " +
-			//		gyroSum[0]);
+			// Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = "
+			// + gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " +
+			// gyroSum[0]);
+			if (recentlyTriggered) {
+				gyroSum[0] = 0;
+				gyroSum[1] = 0;
+				return;
+			}
 
 			// Check if we have a new head motion
 			HeadMotion newHeadMotion = null;
@@ -231,21 +247,52 @@ public class MainActivity extends RoboActivity {
 				return;
 			}
 
-			//Log.i(LOG_TAG, "saving motion to check against next");
+			// Log.i(LOG_TAG, "saving motion to check against next");
 			lastHeadMotion = newHeadMotion;
+		}
+	};
+
+	private Runnable resetTriggered = new Runnable() {
+		@Override
+		public void run() {
+			recentlyTriggered = false;
+			glassStatus.setText(R.string.glass_instructions);
+			enableButtons();
 		}
 	};
 
 	private void onUnderstand() {
 		Log.i(LOG_TAG, "onUnderstand");
 
+		recentlyTriggered = true;
+		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+		glassStatus.setText("Sent understood!");
+		disableButtons();
+
 		understandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
 		updateUi();
 	}
 
+	private void enableButtons() {
+		if (!Build.MODEL.toUpperCase().contains("GLASS")) {
+			androidButtons.setVisibility(View.VISIBLE);
+		}
+	}
+
+	private void disableButtons() {
+		if (!Build.MODEL.toUpperCase().contains("GLASS")) {
+			androidButtons.setVisibility(View.INVISIBLE);
+		}
+	}
+
 	private void onDontUnderstand() {
 		Log.i(LOG_TAG, "onDontUnderstand");
+
+		recentlyTriggered = true;
+		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+		disableButtons();
+		glassStatus.setText("Sent don't understand!");
 
 		dontUnderstandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
@@ -406,6 +453,8 @@ public class MainActivity extends RoboActivity {
 			if (null == handler) {
 				handler = new Handler();
 				handler.postDelayed(pollServer, POLL_PERIOD_MS);
+				glassStatus.setText(R.string.glass_instructions);
+				recentlyTriggered = false;
 			}
 		}
 	}

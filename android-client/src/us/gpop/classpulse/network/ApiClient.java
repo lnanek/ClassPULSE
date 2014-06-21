@@ -100,7 +100,12 @@ public class ApiClient {
 					Log.d(LOG_TAG, "Server returned: " + returnedString);
 					
 					final int firstIndexOfCurlyBraceOpen = returnedString.indexOf('{');
-					final String returnedJson = returnedString.substring(firstIndexOfCurlyBraceOpen);
+					final String returnedJson;
+					if ( -1 == firstIndexOfCurlyBraceOpen ) {
+						returnedJson = returnedString;
+					} else {
+						returnedJson = returnedString.substring(firstIndexOfCurlyBraceOpen);
+					}
 
 					Log.d(LOG_TAG, "Parsing: " + returnedJson);
 										
