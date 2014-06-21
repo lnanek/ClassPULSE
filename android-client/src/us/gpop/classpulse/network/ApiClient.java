@@ -1,6 +1,5 @@
 package us.gpop.classpulse.network;
 
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
@@ -69,17 +68,6 @@ public class ApiClient {
 					ServerResponse result = gson.fromJson ( 
 							new InputStreamReader(response.getEntity().getContent()), 
 							ServerResponse.class );
-					
-					/*
-					BufferedReader br = new BufferedReader(
-							new InputStreamReader((response.getEntity().getContent())));
-
-					String output;
-					Log.d(LOG_TAG, "Output from Server .... \n");
-					while ((output = br.readLine()) != null) {
-						Log.d(LOG_TAG, output);
-					}
-					 */
 					
 					listener.onSendSuccess(result);
 

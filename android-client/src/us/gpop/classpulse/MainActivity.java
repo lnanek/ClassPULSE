@@ -56,6 +56,8 @@ public class MainActivity extends Activity {
 	
 	private TextView dontUnderstandCountTotalView;
 	
+	private TextView userCountView;
+	
 	private int understandCount;
 	
 	private int dontUnderstandCount;
@@ -75,19 +77,23 @@ public class MainActivity extends Activity {
 	private DetectorListener detectorListener = new DetectorListener() {
 		@Override
 		public void onSwipeDownOrBack() {
+			Log.i(LOG_TAG, "onSwipeDownOrBack");
 			finish();
 		}
 		@Override
 		public void onSwipeForwardOrVolumeUp() {
+			Log.i(LOG_TAG, "onSwipeForwardOrVolumeUp");
 			onUnderstand();
 		}
 
 		@Override
 		public void onSwipeBackOrVolumeDown() {
+			Log.i(LOG_TAG, "onSwipeBackOrVolumeDown");
 			onDontUnderstand();
 		}
 		@Override
 		public void onTap() {
+			Log.i(LOG_TAG, "onTap");
 		}
 	};
 	
@@ -110,13 +116,12 @@ public class MainActivity extends Activity {
 		public void onUpdate(float[] gyro, float[] gyroSum) {
 			//Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = " 
 			//		+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " + gyroSum[0]);
-			
-			// Look left and right 
+			// Nod head up and down
 			if ( Math.abs(gyroSum[0]) > NOD_TRIGGER_SUM) {
 				gyroSum[0] = 0;
 				onUnderstand();
 			}
-			
+			// Shake head left and right 			
 			if ( Math.abs(gyroSum[1]) > SHAKE_TRIGGER_SUM) {
 				gyroSum[1] = 0;
 				onDontUnderstand();
@@ -125,12 +130,16 @@ public class MainActivity extends Activity {
 	};
 	
 	private void onUnderstand() {
+		Log.i(LOG_TAG, "onUnderstand");
+		
 		understandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
 		updateUi();		
 	}
 	
 	private void onDontUnderstand() {
+		Log.i(LOG_TAG, "onDontUnderstand");
+		
 		dontUnderstandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
 		updateUi();		
@@ -147,6 +156,7 @@ public class MainActivity extends Activity {
 		dontUnderstandCountView = (TextView) findViewById(R.id.dontUnderstandCount);
 		dontUnderstandCountTotalView = (TextView) findViewById(R.id.dontUnderstandCountTotal);
 		understandCountTotalView = (TextView) findViewById(R.id.understandCountTotal);
+		userCountView = (TextView) findViewById(R.id.userCount);
 		glassInstructions = findViewById(R.id.glassInstructions);
 		androidButtons = findViewById(R.id.androidButtons);
 		understandButton = findViewById(R.id.understandButton);
@@ -180,17 +190,22 @@ public class MainActivity extends Activity {
 	}
 		
 	@Override
-	public boolean onGenericMotionEvent(MotionEvent event) {		
+	public boolean onGenericMotionEvent(MotionEvent event) {	
+		Log.i(LOG_TAG, "onGenericMotionEvent");
+		
 		swipes.onGenericMotionEvent(event);
 		return super.onGenericMotionEvent(event);
 	}
 
 	private void updateUi() {
+		Log.i(LOG_TAG, "updateUi");
+		
 		understandCountView.setText("Understand: " + understandCount);
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
 		if (null != result) {
 			understandCountTotalView.setText("Total understand: " + result.understandTotal);
 			dontUnderstandCountTotalView.setText("Total don't: " + result.dontUnderstandTotal);
+			userCountView.setText(Integer.toString(result.studentsTotal));
 		}
 	}
 
