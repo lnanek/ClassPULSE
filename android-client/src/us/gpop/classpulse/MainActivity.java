@@ -10,6 +10,8 @@ public class MainActivity extends Activity {
 
 	private LocationTracker location;
 	
+	private String email;
+	
 	private boolean resumed;
 	
 	private boolean setup;
@@ -20,6 +22,9 @@ public class MainActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);		
+		
+		email = DeviceEmail.get(this);
+		Log.i(LOG_TAG, "user email = " + email);
 	}
 
 	@Override
