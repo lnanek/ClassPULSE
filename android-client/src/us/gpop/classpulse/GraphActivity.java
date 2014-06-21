@@ -85,6 +85,12 @@ public class GraphActivity extends BaseActivity {
 
 	private boolean recentlyTriggered;
 	
+	@InjectView(R.id.minusOnePleaseWait)
+	private View minusOnePleaseWait;
+	
+	@InjectView(R.id.plusOnePleaseWait)
+	private View plusOnePleaseWait;
+	
 	@InjectView(R.id.infoBar)
 	private View infoBar;
 
@@ -286,6 +292,8 @@ public class GraphActivity extends BaseActivity {
 			recentlyTriggered = false;
 			glassStatus.setText(R.string.glass_instructions);
 			enableButtons();
+			minusOnePleaseWait.setVisibility(View.GONE);
+			plusOnePleaseWait.setVisibility(View.GONE);
 		}
 	};
 
@@ -312,7 +320,7 @@ public class GraphActivity extends BaseActivity {
 
 		recentlyTriggered = true;
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
-		glassStatus.setText("Sent understood!");
+		plusOnePleaseWait.setVisibility(View.VISIBLE);
 		disableButtons();
 
 		audioManager.playSoundEffect(Sounds.SUCCESS);
@@ -356,8 +364,9 @@ public class GraphActivity extends BaseActivity {
 		recentlyTriggered = true;
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
 		disableButtons();
-		glassStatus.setText("Sent don't understand!");
 
+		minusOnePleaseWait.setVisibility(View.VISIBLE);
+		
 		audioManager.playSoundEffect(Sounds.ERROR);
 		
 		dontUnderstandCount++;
