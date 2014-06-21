@@ -117,24 +117,33 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal"
 	    android:paddingTop="5dp"
+	    android:layout_margin="10dp"
 	    >    
-	    <Button
+	    <TextView
 	    	android:id="@+id/understandButton"
 	        android:layout_width="0px"
 	        android:layout_height="wrap_content"   
 	        android:layout_weight="1"  
-	        android:text="I Understand"
+	        android:text="I get it"
 	        android:textSize="30dp"
-	        android:textColor="#FFF"
+	        android:textColor="#000"
+	        android:background="#267b1c"
+	        android:gravity="center"
+	        android:padding="10dp"
+	        android:layout_marginRight="5dp"
 	        />    
-	    <Button
+	    <TextView
 	    	android:id="@+id/dontUnderstandButton"
 	        android:layout_width="0px"
 	        android:layout_height="wrap_content"   
 	        android:layout_weight="1"  
-	        android:text="I Don't Understand"
+	        android:text="I don't"
 	        android:textSize="30dp"
-	        android:textColor="#FFF"
+	        android:textColor="#000"
+	        android:background="#999999"
+	        android:gravity="center"
+	        android:padding="10dp"
+	        android:layout_marginLeft="5dp"
 	        />    
     </LinearLayout>	
         
