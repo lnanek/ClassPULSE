@@ -39,8 +39,6 @@ public class ClassCardScrollActivity extends Activity implements
 		
 		super.onCreate(savedInstanceState);
 		
-		client.getClassList();
-		
 		mCardScrollView = new CardScrollView(this);
 		adapter = new ClassCardScrollAdapter();
 
@@ -63,6 +61,8 @@ public class ClassCardScrollActivity extends Activity implements
 	protected void onResume() {
 		super.onResume();
 		screenWaker.onResume();
+		
+		client.getClassList();
 	}
 
 	private class ClassCardScrollAdapter extends CardScrollAdapter {

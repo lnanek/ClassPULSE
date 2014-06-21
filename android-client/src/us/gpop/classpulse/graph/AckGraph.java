@@ -3,24 +3,19 @@ package us.gpop.classpulse.graph;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.widget.Toast;
+import android.os.Handler;
+import android.util.Log;
 
-import com.jjoe64.graphview.CustomLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-import com.jjoe64.graphview.ValueDependentColor;
-
-import java.util.LinkedList;
-import java.util.ListIterator;
-
-import us.gpop.classpulse.network.ClassStatus;
-import us.gpop.classpulse.network.Graph;
 
 /**
  * Created by Michael Yoon Huh on 6/20/2014.
  */
 public class AckGraph {
+	
+	private Handler handler = new Handler();
 
     /** GRAPH FUNCTIONALITY ____________________________________________________________________ **/
 
@@ -105,8 +100,11 @@ public class AckGraph {
         graphView.setScalable(true); // Enables scaling of the graph.
     }
 
+    private static final String LOG_TAG = AckGraph.class.getSimpleName();
+    
     // updateGraph(): Recreates the graph with the new points.
     public void updateGraph(Context con, int dataPoints) {
+    	Log.i(LOG_TAG, "updateGraph dataPoints = " + dataPoints);
 
         // New AckPoints object to return.
         Point[] newAckPoints = new Point[dataPoints];
@@ -157,6 +155,17 @@ public class AckGraph {
         graphView.redrawAll();
 
         ackDataPoints = newAckPoints;
+                
+        if ( dataPoints >= 60 ) {
+	        //handler.post(new Runnable() {
+			//	@Override
+			//	public void run() {
+        			// TODO just trim data
+        			Log.i(LOG_TAG, "updateGraph - many points, scroll to end");
+			        graphView.scrollToEnd();
+			//	}        	
+	        //});
+        }
     }
 
     /*

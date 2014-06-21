@@ -28,9 +28,15 @@ public class MainActivity extends BaseActivity {
 			return;
 		}
 		setContentView(R.layout.activity_main);
-		client.getClassList();		
 		listView = (ListView) findViewById(R.id.class_list);
 	};
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		client.getClassList();		
+	}
 
 	private ApiClientListener classListListener = new ApiClientListener() {
 

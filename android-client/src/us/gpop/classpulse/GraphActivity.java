@@ -353,7 +353,7 @@ public class GraphActivity extends BaseActivity {
 		// the user can look up to go back to as needed
 		screenWaker.onPause();
 
-		final int delayMs = disablePeriodAfter ? TRIGGER_BREAK_MS : 0;		
+		final int delayMs = disablePeriodAfter ? TRIGGER_BREAK_MS : 100;		
 		recentlyTriggered = true;
 		if ( null != handler ) {
 			handler.postDelayed(resetTriggered, delayMs);
@@ -416,7 +416,7 @@ public class GraphActivity extends BaseActivity {
 		// the user can look up to go back to as needed
 		screenWaker.onPause();
 
-		final int delayMs = disablePeriodAfter ? TRIGGER_BREAK_MS : 0;		
+		final int delayMs = disablePeriodAfter ? TRIGGER_BREAK_MS : 100;		
 		recentlyTriggered = true;
 		if ( null != handler ) {
 			handler.postDelayed(resetTriggered, delayMs);
