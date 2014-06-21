@@ -1,15 +1,14 @@
 package us.gpop.classpulse;
 
-import java.util.ArrayList;
-
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.util.Log;
+
+import com.google.gson.Gson;
 
 public class ApiClient {
 	
@@ -22,6 +21,8 @@ public class ApiClient {
 
 	public static final String UPLOAD_URL = "http://gpop-server.com/classpulse/post.php";
 	
+	final Gson gson = new Gson();
+	
 	public ApiClient() {
 	}
 	
@@ -33,31 +34,31 @@ public class ApiClient {
 			final String className,
 			final ApiClientListener listener) {
 		
-		Log.d(LOG_TAG, "sendToServer");
+		final ApiMessage message = new ApiMessage();
+		message.understandCount = understandCount;
+		message.dontUnderstandCount = dontUnderstandCount;
+		if ( locationTracker.hasLocation() ) {
+			message.lat = locationTracker.getLatitude();
+			message.lon = locationTracker.getLongitude();
+		}
+		message.email = email;
+		message.className = className;
+		
+		final String json = gson.toJson(message);
+		
+		Log.d(LOG_TAG, "sendToServer json = " + json);
 
 		final Thread uploadThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-
-
-				final ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				nameValuePairs.add(new BasicNameValuePair("understandCount", 
-						Integer.toString(understandCount)));
-				nameValuePairs.add(new BasicNameValuePair("dontUnderstandCount", 
-						Integer.toString(dontUnderstandCount)));
-				nameValuePairs.add(new BasicNameValuePair("className", className));
-				nameValuePairs.add(new BasicNameValuePair("email", email));
-				if ( locationTracker.hasLocation() ) {
-				nameValuePairs.add(new BasicNameValuePair("lat", 
-						Double.toString(locationTracker.getLatitude())));
-				nameValuePairs.add(new BasicNameValuePair("lon", 
-						Double.toString(locationTracker.getLongitude())));
-				}
 				
 				try {
 					HttpPost httpPost = new HttpPost(UPLOAD_URL);
-					httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-					DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+					
+			        StringEntity params =new StringEntity(json);
+			        httpPost.setEntity(params);
+
+			        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
 					HttpResponse response = defaultHttpClient.execute(httpPost);
 					Log.d(LOG_TAG, "Response status: " + response.getStatusLine());
 					

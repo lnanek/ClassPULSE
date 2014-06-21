@@ -84,8 +84,8 @@ public class MainActivity extends Activity {
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {		
 		@Override
 		public void onUpdate(float[] gyro, float[] gyroSum) {
-			Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = " 
-					+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " + gyroSum[0]);
+			//Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = " 
+			//		+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " + gyroSum[0]);
 			
 			// Look left and right 
 			if ( Math.abs(gyroSum[0]) > NOD_TRIGGER_SUM) {
