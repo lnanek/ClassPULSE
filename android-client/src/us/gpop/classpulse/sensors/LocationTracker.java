@@ -18,6 +18,7 @@ public class LocationTracker {
 	private Float locationAccuracy;
 	private Double longitude;
 	private Double latitude;
+	private boolean listening;
 
 	private LocationListener locationListener = new LocationListener() {
 		@Override
@@ -32,6 +33,9 @@ public class LocationTracker {
 				longitude = location.getLongitude();
 				locationAccuracy = location.getAccuracy();
 			}
+			
+			// Just keep first one for now.
+			stopListeningForLocations();
 		}
 
 		@Override
@@ -54,6 +58,8 @@ public class LocationTracker {
 
 	public void startAccquiringLocationData() {
 		Log.d(TAG, "accquireLocationData");
+		
+		listening = true;
 
 		final List<String> providers = locationManager.getAllProviders();
 		for (final String provider : providers) {
@@ -68,7 +74,12 @@ public class LocationTracker {
 	
 	public void stopListeningForLocations() {
 		Log.d(TAG, "stopListeningForLocations");		
-		locationManager.removeUpdates(locationListener);
+		
+		if ( listening ) {
+			locationManager.removeUpdates(locationListener);
+			listening = false;
+		}		
+
 	}
 
 	public Double getLongitude() {

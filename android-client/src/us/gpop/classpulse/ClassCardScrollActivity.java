@@ -3,10 +3,10 @@ package us.gpop.classpulse;
 import java.util.ArrayList;
 import java.util.List;
 
+import us.gpop.classpulse.device.ScreenWaker;
 import us.gpop.classpulse.network.ApiClient;
 import us.gpop.classpulse.network.ClassStatus;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,13 +29,29 @@ public class ClassCardScrollActivity extends Activity implements
 	private ClassCardScrollAdapter adapter;
 	private List<ClassStatus> classList;
 
+	private ScreenWaker screenWaker;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		screenWaker = new ScreenWaker(this);
+		
 		super.onCreate(savedInstanceState);
 		client.getClassList();
 		mCardScrollView = new CardScrollView(this);
 		adapter = new ClassCardScrollAdapter();
 		setContentView(R.layout.card_loader);
+	}	
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		screenWaker.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		screenWaker.onResume();
 	}
 
 	private class ClassCardScrollAdapter extends CardScrollAdapter {

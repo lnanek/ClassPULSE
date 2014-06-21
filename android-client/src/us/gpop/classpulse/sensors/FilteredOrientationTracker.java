@@ -124,7 +124,7 @@ public class FilteredOrientationTracker implements SensorEventListener {
 	public void onPause() {
 		// unregister sensor listeners to prevent the activity from draining the
 		// device's battery.
-		mSensorManager.unregisterListener(this);
+		//mSensorManager.unregisterListener(this);
 		listening = false;
 	}
 

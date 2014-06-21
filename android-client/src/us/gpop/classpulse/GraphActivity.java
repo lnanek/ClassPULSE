@@ -15,9 +15,12 @@ import us.gpop.classpulse.network.ClassStatus;
 import us.gpop.classpulse.network.Graph;
 import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,7 +50,7 @@ public class GraphActivity extends BaseActivity {
 	private static enum HeadMotion {
 		LEFT, RIGHT, UP, DOWN;
 	}
-	
+
 	private static final int DOING_GOOD_BAR_COLOR = Color.parseColor("#000000");
 
 	private static final int DOING_BAD_BAR_COLOR = Color.parseColor("#851a00");
@@ -59,9 +62,9 @@ public class GraphActivity extends BaseActivity {
 	// How long to wait before checking the server for the latest totals
 	private static final int POLL_PERIOD_MS = 5 * 1000;
 
-	private static final float NOD_TRIGGER_SUM = 20;
+	private static final float NOD_TRIGGER_SUM = 10;
 
-	private static final float SHAKE_TRIGGER_SUM = 20;
+	private static final float SHAKE_TRIGGER_SUM = 10;
 
 	private static final String LOG_TAG = GraphActivity.class.getSimpleName();
 
@@ -71,7 +74,7 @@ public class GraphActivity extends BaseActivity {
 
 	private ScreenWaker screenWaker;
 
-	private FilteredOrientationTracker tracker;
+	private FilteredOrientationTracker orientation;
 
 	private Detector swipes;
 
@@ -79,21 +82,17 @@ public class GraphActivity extends BaseActivity {
 
 	private HeadMotion lastHeadMotion;
 
-	private boolean resumed;
-
-	private boolean setup;
-
 	private boolean recentlyTriggered;
 
 	@InjectView(R.id.root)
 	private View root;
-	
+
 	@InjectView(R.id.minusOnePleaseWait)
 	private View minusOnePleaseWait;
-	
+
 	@InjectView(R.id.plusOnePleaseWait)
 	private View plusOnePleaseWait;
-	
+
 	@InjectView(R.id.infoBar)
 	private View infoBar;
 
@@ -112,12 +111,15 @@ public class GraphActivity extends BaseActivity {
 	@InjectView(R.id.userCount)
 	private TextView userCountView;
 
-	@InjectView(R.id.glassStatus)
-	private TextView glassStatus;
+	@InjectView(R.id.shakeInstruction)
+	private TextView shakeInstruction;
+	
+	@InjectView(R.id.nodInstruction)
+	private TextView nodInstruction;
 
 	@InjectView(R.id.titleBar)
 	private View titleBar;
-	
+
 	@InjectView(R.id.debugReadings)
 	private View debugReadings;
 
@@ -143,14 +145,14 @@ public class GraphActivity extends BaseActivity {
 	private String className = "ADV 320F";
 
 	private Graph graph;
-	
+
 	private AckGraph ackLineGraph = new AckGraph();
 
 	private Bundle intentExtras;
-	
+
 	@Inject
 	private AudioManager audioManager;
-	
+
 	private boolean isShowingDebugReadings;
 
 	private Runnable pollServer = new Runnable() {
@@ -204,11 +206,11 @@ public class GraphActivity extends BaseActivity {
 		@Override
 		public void onSendSuccess(final Object resultObject) {
 			final Graph result = (Graph) resultObject;
-			Log.i(LOG_TAG, "onSendSuccess result = " + result);			
+			Log.i(LOG_TAG, "onSendSuccess result = " + result);
 			GraphActivity.this.graph = result;
 			// Don't force the screen on after the first time we see the data
 			root.setKeepScreenOn(false);
-            updateUi();
+			updateUi();
 		}
 
 		@Override
@@ -222,9 +224,9 @@ public class GraphActivity extends BaseActivity {
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {
 		@Override
 		public void onUpdate(float[] gyro, float[] gyroSum) {
-			// Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = "
-			// + gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " +
-			// gyroSum[0]);
+			 //Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = "
+			 //+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " +
+			 //gyroSum[0]);
 			if (recentlyTriggered) {
 				gyroSum[0] = 0;
 				gyroSum[1] = 0;
@@ -295,59 +297,71 @@ public class GraphActivity extends BaseActivity {
 		@Override
 		public void run() {
 			recentlyTriggered = false;
-			glassStatus.setText(R.string.glass_instructions);
+			
+			shakeInstruction.setAlpha(1f);
+			nodInstruction.setAlpha(1f);
+			
 			enableButtons();
 			minusOnePleaseWait.setVisibility(View.GONE);
 			plusOnePleaseWait.setVisibility(View.GONE);
-			
-			if (null != tracker && resumed && hasWindowFocus()) {
-				tracker.onResume();
+			if (null != orientation) {
+				orientation.onResume();
 			}
 		}
 	};
 
 	private void toggleDisplayingDebugReading() {
 		Log.i(LOG_TAG, "toggleDisplayingDebugReading");
-		
+
 		audioManager.playSoundEffect(Sounds.TAP);
-			
+
 		if (!isShowingDebugReadings) {
 			debugReadings.setAlpha(0.5f);
 			isShowingDebugReadings = true;
 		} else {
-			debugReadings.setAlpha(0f);				
+			debugReadings.setAlpha(0f);
 			isShowingDebugReadings = false;
 		}
 	}
-	
+
 	private void onUnderstand() {
-		Log.i(LOG_TAG, "onUnderstand");			
+		Log.i(LOG_TAG, "onUnderstand");
 		if (recentlyTriggered) {
 			audioManager.playSoundEffect(Sounds.ERROR);
 			return;
 		}
 
+		shakeInstruction.setAlpha(0f);
+		nodInstruction.setAlpha(0f);
+
+		// Wake up screen
+		screenWaker.onResume();
+		// But let screen turn off, immersion will keep our activity up
+		// the user can look up to go back to as needed
+		screenWaker.onPause();
+
 		recentlyTriggered = true;
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
 		plusOnePleaseWait.setVisibility(View.VISIBLE);
 		disableButtons();
-		
+
 		AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
-		animation.setDuration(TRIGGER_BREAK_MS); 
-		if (null != tracker) {
-			tracker.onPause();
+		animation.setDuration(TRIGGER_BREAK_MS);
+		if (null != orientation) {
+			orientation.onPause();
 		}
 		plusOnePleaseWait.startAnimation(animation);
 
 		audioManager.playSoundEffect(Sounds.SUCCESS);
-		
+
 		understandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
 
-        // OLD CODE. MANUAL UPDATE OF GRAPH FROM LOCAL USER.
-		//ackLineGraph.refreshGraph(this, true); // A "YAY/I UNDERSTAND" response.
+		// OLD CODE. MANUAL UPDATE OF GRAPH FROM LOCAL USER.
+		// ackLineGraph.refreshGraph(this, true); // A "YAY/I UNDERSTAND"
+		// response.
 
-        updateUi();
+		updateUi();
 	}
 
 	private void enableButtons() {
@@ -371,37 +385,57 @@ public class GraphActivity extends BaseActivity {
 	}
 
 	private void onDontUnderstand() {
-		Log.i(LOG_TAG, "onDontUnderstand");	
+		Log.i(LOG_TAG, "onDontUnderstand");
 		if (recentlyTriggered) {
 			audioManager.playSoundEffect(Sounds.DISALLOWED);
 			return;
 		}
 
+		shakeInstruction.setAlpha(0f);
+		nodInstruction.setAlpha(0f);
+		
+		// Wake up screen
+		screenWaker.onResume();
+		// But let screen turn off, immersion will keep our activity up
+		// the user can look up to go back to as needed
+		screenWaker.onPause();
+
 		recentlyTriggered = true;
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
-		
-		if (null != tracker) {
-			tracker.onPause();
+
+		if (null != orientation) {
+			orientation.onPause();
 		}
-		
+
 		disableButtons();
 
 		minusOnePleaseWait.setVisibility(View.VISIBLE);
 
 		AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
-		animation.setDuration(TRIGGER_BREAK_MS); 
+		animation.setDuration(TRIGGER_BREAK_MS);
 		minusOnePleaseWait.startAnimation(animation);
-		
+
 		audioManager.playSoundEffect(Sounds.ERROR);
-		
+
 		dontUnderstandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
 
-        // OLD CODE. SHOWS DATA FROM LOCAL USER.
-        //ackLineGraph.refreshGraph(this, false); // A "NAY/DON'T UNDERSTAND" response.
+		// OLD CODE. SHOWS DATA FROM LOCAL USER.
+		// ackLineGraph.refreshGraph(this, false); // A "NAY/DON'T UNDERSTAND"
+		// response.
 
-        updateUi();
+		updateUi();
 	}
+	
+	final BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+				orientation.onPause();
+				orientation.onResume();
+			}
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -447,6 +481,15 @@ public class GraphActivity extends BaseActivity {
 		email = DeviceEmail.get(this);
 		Log.i(LOG_TAG, "user email = " + email);
 
+		if (Build.MODEL.toUpperCase().contains("GLASS")) {
+			orientation = new FilteredOrientationTracker(this, trackerListener);
+			orientation.onResume();
+
+			// Try to keep using sensors after screen off via re-registering
+			final IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+			//registerReceiver(receiver,  filter);
+		}
+
 		updateUi();
 
 		if (Build.MODEL.toUpperCase().contains("GLASS")) {
@@ -458,25 +501,35 @@ public class GraphActivity extends BaseActivity {
 			Log.d(LOG_TAG, "Not Glass: " + Build.MODEL);
 			glassInstructions.setVisibility(View.GONE);
 		}
-		
-        // Initialize the graph.
-        ackLineGraph.setUpGraph(this);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.graph_container);
-        layout.addView(ackLineGraph.graphView);
 
-		if(intentExtras != null 
+		// Initialize the graph.
+		ackLineGraph.setUpGraph(this);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.graph_container);
+		layout.addView(ackLineGraph.graphView);
+
+		if (intentExtras != null
 				&& intentExtras.containsKey("className")
-				&& intentExtras.containsKey("totalStudents")
-				) {
+				&& intentExtras.containsKey("totalStudents")) {
 			classTitle.setText(intentExtras.getString("className"));
 			userCountView.setText(Integer.toString(intentExtras.getInt("totalStudents")));
+		}
+		
+		if (null == location) {
+			location = new LocationTracker(this);
+			location.startAccquiringLocationData();
+		}
+
+		if (null == handler) {
+			handler = new Handler();
+			handler.post(pollServer);
+			recentlyTriggered = false;
 		}
 	}
 
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
 		Log.i(LOG_TAG, "onGenericMotionEvent");
-		if ( null != swipes ) {
+		if (null != swipes) {
 			swipes.onGenericMotionEvent(event);
 		}
 		return super.onGenericMotionEvent(event);
@@ -487,8 +540,8 @@ public class GraphActivity extends BaseActivity {
 
 		understandCountView.setText("Understand: " + understandCount);
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
-		
-		if ( null == graph || null == graph.graph || graph.graph.isEmpty() ) {
+
+		if (null == graph || null == graph.graph || graph.graph.isEmpty()) {
 			Log.i(LOG_TAG, "updateUi - no graph data");
 			return;
 		}
@@ -497,15 +550,15 @@ public class GraphActivity extends BaseActivity {
 			understandCountTotalView.setText("Total understand: " + classStatus.totalUnderstand);
 			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.totalDontUnderstand);
 			userCountView.setText(Integer.toString(classStatus.totalStudents));
-			
-			
-			if ( classStatus.totalDontUnderstand > classStatus.totalUnderstand) {
+
+			if (classStatus.totalDontUnderstand > classStatus.totalUnderstand) {
 				final int difference = classStatus.totalDontUnderstand - classStatus.totalUnderstand;
-	
+
 				Log.i(LOG_TAG, "updateUi doing bad - " + difference);
-				
-				// Full visible bad color if over 20 don't understand more than understand.
-				if ( difference >= 20 ) {
+
+				// Full visible bad color if over 20 don't understand more than
+				// understand.
+				if (difference >= 20) {
 					Log.i(LOG_TAG, "updateUi - doing full bad");
 					glassInstructions.setBackgroundColor(DOING_BAD_BAR_COLOR);
 				} else {
@@ -514,21 +567,23 @@ public class GraphActivity extends BaseActivity {
 					Log.i(LOG_TAG, "updateUi - doing bad ratio - " + ratio);
 					final int alpha = (int) (255 * ratio);
 					Log.i(LOG_TAG, "updateUi - doing bad alpha - " + alpha);
-					final int color =Color.argb(
-							alpha, 
-							Color.red(DOING_BAD_BAR_COLOR), 
-							Color.green(DOING_BAD_BAR_COLOR), 
+					final int color = Color.argb(
+							alpha,
+							Color.red(DOING_BAD_BAR_COLOR),
+							Color.green(DOING_BAD_BAR_COLOR),
 							Color.blue(DOING_BAD_BAR_COLOR));
-					glassInstructions.setBackgroundColor(color);					
-				}				
+					glassInstructions.setBackgroundColor(color);
+				}
 			} else {
 				Log.i(LOG_TAG, "updateUi - doing good");
 				glassInstructions.setBackgroundColor(DOING_GOOD_BAR_COLOR);
 			}
 		}
 
-        // GRAPH UPDATE
-        ackLineGraph.refreshLiveGraph(this, classStatus.totalUnderstand, classStatus.totalDontUnderstand); // Refresh the graph.
+		// GRAPH UPDATE
+		ackLineGraph.refreshLiveGraph(this, classStatus.totalUnderstand, classStatus.totalDontUnderstand); // Refresh
+																											// the
+																											// graph.
 	}
 
 	@Override
@@ -536,13 +591,11 @@ public class GraphActivity extends BaseActivity {
 		Log.i(LOG_TAG, "onResume hasFocus = " + hasWindowFocus());
 
 		super.onResume();
-		resumed = true;
-		setupOrCleanup();
 
 		// Wake up screen
 		screenWaker.onResume();
-		
 		// But let screen turn off, immersion will keep our activity up
+		// the user can look up to go back to as needed
 		screenWaker.onPause();
 	}
 
@@ -551,71 +604,28 @@ public class GraphActivity extends BaseActivity {
 		Log.i(LOG_TAG, "onWindowFocusChanged hasFocus = " + hasFocus);
 
 		super.onWindowFocusChanged(hasFocus);
-		setupOrCleanup();
 	}
 
 	@Override
 	protected void onPause() {
 		Log.i(LOG_TAG, "onPause hasFocus = " + hasWindowFocus());
-
 		super.onPause();
-		resumed = false;
-		setupOrCleanup();
 	}
 
-	/**
-	 * Glass has a nasty habit of resuming, pausing, resuming, then giving
-	 * window focus. So delay setup until we are both resumed and have window
-	 * focus, otherwise cleanup.
-	 **/
-	private void setupOrCleanup() {
-		Log.i(LOG_TAG, "setupOrCleanup");
-
-		// Cleanup
-		if (!resumed && !hasWindowFocus() && setup) {
-			Log.i(LOG_TAG, "cleaning up...");
-			setup = false;
-			if (null != location) {
-				location.stopListeningForLocations();
-				location = null;
-			}
-
-			if (null != tracker) {
-				tracker.onPause();
-				tracker = null;
-			}
-
-			if (null != handler) {
-				handler.removeCallbacksAndMessages(null);
-				handler = null;
-			}
-
-			return;
+	@Override
+	protected void onDestroy() {
+		if (null != orientation) {
+			orientation.onPause();
+			orientation = null;
 		}
-
-		// Startup
-		if (resumed && hasWindowFocus() && !setup) {
-			Log.i(LOG_TAG, "setup...");
-			setup = true;
-			if (null == location) {
-				location = new LocationTracker(this);
-				location.startAccquiringLocationData();
-			}
-
-			if (Build.MODEL.toUpperCase().contains("GLASS")) {
-				if (null == tracker) {
-					tracker = new FilteredOrientationTracker(this, trackerListener);
-					tracker.onResume();
-				}
-			}
-
-			if (null == handler) {
-				handler = new Handler();
-				handler.post(pollServer);
-				glassStatus.setText(R.string.glass_instructions);
-				recentlyTriggered = false;
-			}
+		if (null != location) {
+			location.stopListeningForLocations();
+			location = null;
 		}
+		if (null != handler) {
+			handler.removeCallbacksAndMessages(null);
+			handler = null;
+		}				
+		super.onDestroy();
 	}
-
 }

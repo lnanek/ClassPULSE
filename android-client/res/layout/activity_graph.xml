@@ -95,14 +95,6 @@
             android:layout_weight="1"
             android:background="@drawable/grid_opaque_tiled"
             >
-<!--  
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/grid_opaque_tiled"
-				android:scaleType="center"                
-                />
--->            
             <LinearLayout
                 android:id="@+id/graph_container"
                 android:layout_width="match_parent"
@@ -179,7 +171,7 @@
                 android:layout_weight="1" />
 
             <TextView
-                android:id="@+id/glassStatus"
+                android:id="@+id/nodInstruction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
@@ -189,10 +181,11 @@
                 android:textSize="20px" />
 
             <TextView
+                android:id="@+id/shakeInstruction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
-                android:text="Shake- I don&apos;t"
+                android:text="Shake - I don&apos;t"
                 android:textColor="#FFF"
                 android:textSize="20px" />
         </LinearLayout>
