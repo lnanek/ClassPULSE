@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -22,6 +21,8 @@ public class MainActivity extends Activity {
 	private LocationTracker location;
 	
 	private ScreenWaker screenWaker;
+	
+	private FilteredOrientationTracker tracker;
 	
 	private Detector swipes;
 	
@@ -60,6 +61,36 @@ public class MainActivity extends Activity {
 		}
 	};
 	
+	private static final float NOD_TRIGGER_SUM = 25;
+	private static final float SHAKE_TRIGGER_SUM = 25;
+	
+	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {		
+		@Override
+		public void onUpdate(float[] gyro, float[] gyroSum) {
+			// Look left and right 
+			final float xGyro = gyro[1];
+			final float xGyroSum = gyroSum[1];
+
+			// Look up and down 
+			final float yGyro = gyro[0];
+			final float yGyroSum = gyroSum[0];
+
+			Log.i(LOG_TAG, "xGyro = " + xGyro + " xGyroSum = " + xGyroSum + " yGyro = " + yGyro + " yGyroSum = " + yGyroSum);
+			
+			if ( Math.abs(yGyroSum) > NOD_TRIGGER_SUM) {
+				gyroSum[0] = 0;
+				understandCount++;
+				updateUi();
+			}
+			
+			if ( Math.abs(xGyroSum) > SHAKE_TRIGGER_SUM) {
+				gyroSum[1] = 0;
+				dontUnderstandCount++;
+				updateUi();
+			}
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(LOG_TAG, "onCreate");
@@ -72,7 +103,7 @@ public class MainActivity extends Activity {
 		
 		email = DeviceEmail.get(this);
 		Log.i(LOG_TAG, "user email = " + email);
-		
+				
 		updateUi();
 		
 		if (Build.MODEL.toUpperCase().contains("GLASS")) {
@@ -137,6 +168,12 @@ public class MainActivity extends Activity {
 				location.stopListeningForLocations();
 				location = null;
 			}
+			
+			if ( null != tracker ) {
+				tracker.onPause();
+				tracker = null;
+			}
+			
 			return;
 		}
 		
@@ -147,6 +184,11 @@ public class MainActivity extends Activity {
 			if ( null == location ) {
 				location = new LocationTracker(this);
 				location.startAccquiringLocationData();
+			}
+			
+			if ( null == tracker ) {
+				tracker = new FilteredOrientationTracker(this, trackerListener);
+				tracker.onResume();
 			}
 		}
 	}
