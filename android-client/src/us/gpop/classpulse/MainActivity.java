@@ -9,6 +9,7 @@ import us.gpop.classpulse.device.DetectorListener;
 import us.gpop.classpulse.device.DeviceEmail;
 import us.gpop.classpulse.device.ScreenWaker;
 import us.gpop.classpulse.device.SwipeDetector;
+import us.gpop.classpulse.graph.AckGraph;
 import us.gpop.classpulse.network.ApiClient;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
 import us.gpop.classpulse.network.ClassStatus;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends RoboActivity {
@@ -117,6 +119,8 @@ public class MainActivity extends RoboActivity {
 	private String className = "ADV 320F";
 
 	private Graph graph;
+
+    private AckGraph ackLineGraph = new AckGraph(); // Acknowledgment graph.
 
 	private Runnable pollServer = new Runnable() {
 		@Override
@@ -271,6 +275,12 @@ public class MainActivity extends RoboActivity {
 
 		understandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
+
+        // UPDATE THE GRAPH
+        ackLineGraph.refreshGraph(this, true); // A "YAY/I UNDERSTAND" response.
+        //refreshGraph(true);
+        // UPDATE THE GRAPH
+
 		updateUi();
 	}
 
@@ -296,6 +306,11 @@ public class MainActivity extends RoboActivity {
 
 		dontUnderstandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
+
+        // UPDATE THE GRAPH
+        ackLineGraph.refreshGraph(this, false); // A "NAY/DON'T UNDERSTAND" response.
+        // UPDATE THE GRAPH
+
 		updateUi();
 	}
 
@@ -354,6 +369,11 @@ public class MainActivity extends RoboActivity {
 			Log.d(LOG_TAG, "Not Glass: " + Build.MODEL);
 			glassInstructions.setVisibility(View.GONE);
 		}
+
+        // Initialize the graph.
+        ackLineGraph.setUpGraph(this);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.graph_container);
+        layout.addView(ackLineGraph.graphView);
 	}
 
 	@Override
