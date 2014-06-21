@@ -4,43 +4,108 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:keepScreenOn="true"
-    android:background="#000"
+    android:background="#333333"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     >
 
-    <View
-        android:layout_width="0px"
-        android:layout_height="0px"      
-        android:layout_weight="1"  
-        />
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:paddingBottom="5dp"
+	    >    
+	    <TextView
+	        android:id="@+id/classTitle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="ADV 320F"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />	
+	    <TextView
+	        android:id="@+id/userCount"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="12"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />    
+    </LinearLayout>
     
-    <TextView
-        android:id="@+id/understandCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Understand: 0"
-        android:textSize="30dp"
-        android:textColor="#FFF"
-        />
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"   
+	    android:layout_weight="1"  
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:background="#000"
+	    > 	
     
-    <View
-        android:layout_width="0px"
-        android:layout_height="0px"      
-        android:layout_weight="1"  
-        />
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />
+	    
+	    <TextView
+	        android:id="@+id/understandCount"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Understand: 0"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />
+	    
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />
+	    
+	    <TextView
+	        android:id="@+id/dontUnderstandCount"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Don't understand: 0"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />
+	    
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />
     
-    <TextView
-        android:id="@+id/dontUnderstandCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Don't understand: 0"
-        android:textSize="30dp"
-        android:textColor="#FFF"
-        />
-    
-    <View
-        android:layout_width="0px"
-        android:layout_height="0px"      
-        android:layout_weight="1"  
-        />
-    
+    </LinearLayout>
+
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:paddingTop="5dp"
+	    >    
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />	
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Nod: I get it    Shake: I don't"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />    
+    </LinearLayout>
+        
 </LinearLayout>

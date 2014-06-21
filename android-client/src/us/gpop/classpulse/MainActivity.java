@@ -16,6 +16,10 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	private static final float NOD_TRIGGER_SUM = 25;
+
+	private static final float SHAKE_TRIGGER_SUM = 25;
+
 	private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
 	private LocationTracker location;
@@ -60,30 +64,21 @@ public class MainActivity extends Activity {
 		public void onTap() {
 		}
 	};
-	
-	private static final float NOD_TRIGGER_SUM = 25;
-	private static final float SHAKE_TRIGGER_SUM = 25;
-	
+		
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {		
 		@Override
 		public void onUpdate(float[] gyro, float[] gyroSum) {
-			// Look left and right 
-			final float xGyro = gyro[1];
-			final float xGyroSum = gyroSum[1];
-
-			// Look up and down 
-			final float yGyro = gyro[0];
-			final float yGyroSum = gyroSum[0];
-
-			Log.i(LOG_TAG, "xGyro = " + xGyro + " xGyroSum = " + xGyroSum + " yGyro = " + yGyro + " yGyroSum = " + yGyroSum);
+			Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = " 
+					+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " + gyroSum[0]);
 			
-			if ( Math.abs(yGyroSum) > NOD_TRIGGER_SUM) {
+			// Look left and right 
+			if ( Math.abs(gyroSum[0]) > NOD_TRIGGER_SUM) {
 				gyroSum[0] = 0;
 				understandCount++;
 				updateUi();
 			}
 			
-			if ( Math.abs(xGyroSum) > SHAKE_TRIGGER_SUM) {
+			if ( Math.abs(gyroSum[1]) > SHAKE_TRIGGER_SUM) {
 				gyroSum[1] = 0;
 				dontUnderstandCount++;
 				updateUi();
