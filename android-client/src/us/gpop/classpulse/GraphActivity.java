@@ -354,7 +354,9 @@ public class GraphActivity extends BaseActivity {
 		screenWaker.onPause();
 
 		recentlyTriggered = true;
-		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+		if ( null != handler ) {
+			handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+		}
 		plusOnePleaseWait.setVisibility(View.VISIBLE);
 		disableButtons();
 
@@ -414,7 +416,9 @@ public class GraphActivity extends BaseActivity {
 		screenWaker.onPause();
 
 		recentlyTriggered = true;
-		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+		if ( null != handler ) {
+			handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+		}
 
 		if (null != orientation) {
 			orientation.onPause();
