@@ -54,7 +54,6 @@
 	    android:paddingLeft="20dp"
 	    android:paddingRight="20dp"
 	    android:gravity="center"
-    	android:background="#007e7a"
 	    >    
 	    <ImageView
 	        android:layout_width="34px"
@@ -108,7 +107,6 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical"   
-	    android:background="@drawable/grid_opaque"
 	    android:gravity="center"
 	    android:alpha="0"
 	    > 	

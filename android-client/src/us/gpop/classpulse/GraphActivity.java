@@ -457,10 +457,8 @@ public class GraphActivity extends BaseActivity {
 			userCountView.setText(Integer.toString(classStatus.totalStudents));
 			
 			if ( classStatus.totalDontUnderstand > classStatus.totalUnderstand) {
-				infoBar.setBackgroundColor(DOING_BAD_BAR_COLOR);
 				glassInstructions.setBackgroundColor(DOING_BAD_BAR_COLOR);				
 			} else {
-				infoBar.setBackgroundColor(DOING_GOOD_BAR_COLOR);
 				glassInstructions.setBackgroundColor(DOING_GOOD_BAR_COLOR);
 			}
 		}
