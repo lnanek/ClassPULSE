@@ -424,7 +424,10 @@ public class GraphActivity extends BaseActivity {
         LinearLayout layout = (LinearLayout) findViewById(R.id.graph_container);
         layout.addView(ackLineGraph.graphView);
 
-		if(intentExtras != null) {
+		if(intentExtras != null 
+				&& intentExtras.containsKey("className")
+				&& intentExtras.containsKey("totalStudents")
+				) {
 			classTitle.setText(intentExtras.getString("className"));
 			userCountView.setText(Integer.toString(intentExtras.getInt("totalStudents")));
 		}
