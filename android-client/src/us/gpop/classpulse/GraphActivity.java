@@ -187,13 +187,13 @@ public class GraphActivity extends BaseActivity {
 		@Override
 		public void onSwipeForwardOrVolumeUp() {
 			Log.i(LOG_TAG, "onSwipeForwardOrVolumeUp");
-			onUnderstand();
+			onUnderstand(false);
 		}
 
 		@Override
 		public void onSwipeBackOrVolumeDown() {
 			Log.i(LOG_TAG, "onSwipeBackOrVolumeDown");
-			onDontUnderstand();
+			onDontUnderstand(false);
 		}
 
 		@Override
@@ -274,26 +274,26 @@ public class GraphActivity extends BaseActivity {
 					HeadMotion.RIGHT == newHeadMotion) {
 				Log.i(LOG_TAG, "left right");
 				lastHorizontalHeadMotion = null;
-				onDontUnderstand();
+				onDontUnderstand(true);
 				return;
 			} else if (HeadMotion.RIGHT == lastHorizontalHeadMotion &&
 					HeadMotion.LEFT == newHeadMotion) {
 				Log.i(LOG_TAG, "right left");
 				lastHorizontalHeadMotion = null;
-				onDontUnderstand();
+				onDontUnderstand(true);
 				return;
 				
 			} else if (HeadMotion.UP == lastVerticalHeadMotion &&
 					HeadMotion.DOWN == newHeadMotion) {
 				Log.i(LOG_TAG, "up down");
 				lastVerticalHeadMotion = null;
-				onUnderstand();
+				onUnderstand(true);
 				return;
 			} else if (HeadMotion.DOWN == lastVerticalHeadMotion &&
 					HeadMotion.UP == newHeadMotion) {
 				Log.i(LOG_TAG, "down left");
 				lastVerticalHeadMotion = null;
-				onUnderstand();
+				onUnderstand(true);
 				return;
 			}
 
@@ -337,7 +337,7 @@ public class GraphActivity extends BaseActivity {
 		}
 	}
 
-	private void onUnderstand() {
+	private void onUnderstand(final boolean disablePeriodAfter) {
 		Log.i(LOG_TAG, "onUnderstand");
 		if (recentlyTriggered) {
 			audioManager.playSoundEffect(Sounds.ERROR);
@@ -353,15 +353,16 @@ public class GraphActivity extends BaseActivity {
 		// the user can look up to go back to as needed
 		screenWaker.onPause();
 
+		final int delayMs = disablePeriodAfter ? TRIGGER_BREAK_MS : 0;		
 		recentlyTriggered = true;
 		if ( null != handler ) {
-			handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+			handler.postDelayed(resetTriggered, delayMs);
 		}
 		plusOnePleaseWait.setVisibility(View.VISIBLE);
 		disableButtons();
 
 		AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
-		animation.setDuration(TRIGGER_BREAK_MS);
+		animation.setDuration(delayMs);
 		if (null != orientation) {
 			orientation.onPause();
 		}
@@ -399,7 +400,7 @@ public class GraphActivity extends BaseActivity {
 		}
 	}
 
-	private void onDontUnderstand() {
+	private void onDontUnderstand(final boolean disablePeriodAfter) {
 		Log.i(LOG_TAG, "onDontUnderstand");
 		if (recentlyTriggered) {
 			audioManager.playSoundEffect(Sounds.DISALLOWED);
@@ -415,9 +416,10 @@ public class GraphActivity extends BaseActivity {
 		// the user can look up to go back to as needed
 		screenWaker.onPause();
 
+		final int delayMs = disablePeriodAfter ? TRIGGER_BREAK_MS : 0;		
 		recentlyTriggered = true;
 		if ( null != handler ) {
-			handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+			handler.postDelayed(resetTriggered, delayMs);
 		}
 
 		if (null != orientation) {
@@ -429,7 +431,7 @@ public class GraphActivity extends BaseActivity {
 		minusOnePleaseWait.setVisibility(View.VISIBLE);
 
 		AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
-		animation.setDuration(TRIGGER_BREAK_MS);
+		animation.setDuration(delayMs);
 		minusOnePleaseWait.startAnimation(animation);
 
 		audioManager.playSoundEffect(Sounds.ERROR);
@@ -485,13 +487,13 @@ public class GraphActivity extends BaseActivity {
 		understandButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				onUnderstand();
+				onUnderstand(false);
 			}
 		});
 		dontUnderstandButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				onDontUnderstand();
+				onDontUnderstand(false);
 			}
 		});
 
