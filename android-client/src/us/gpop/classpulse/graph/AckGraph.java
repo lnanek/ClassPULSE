@@ -82,10 +82,13 @@ public class AckGraph {
         graphView.addSeries(new GraphViewSeries(ackData)); // Adds the data into the graph.
         graphView.setViewPort(0, 60); // Sets the bottom scale.
         graphView.setManualYAxisBounds(20, -20); // Sets the Y-Axis Bounds.
-        graphView.getGraphViewStyle().setGridColor(Color.parseColor("#6a6a6a")); // Dark gray GRID color.
-
+        graphView.getGraphViewStyle().setGridColor(Color.TRANSPARENT);
+        graphView.setBackgroundColor(Color.TRANSPARENT);
         graphView.getGraphViewStyle().setVerticalLabelsWidth(0);
-        //graphView.getGraphViewStyle().
+        graphView.getGraphViewStyle().setHorizontalLabelsColor(Color.TRANSPARENT);
+        graphView.getGraphViewStyle().setNumHorizontalLabels(0);
+        graphView.getGraphViewStyle().setNumVerticalLabels(0);
+        graphView.getGraphViewStyle().setVerticalLabelsColor(Color.TRANSPARENT);
         
         // Replaces x/y-axis labels with blanks.
         graphView.setHorizontalLabels(new String[] {"", "", "", "", "", "", "", "", "", "", "", "", "",
@@ -132,7 +135,13 @@ public class AckGraph {
         graphView.addSeries(new GraphViewSeries(ackData)); // Adds the data into the graph.
         graphView.setViewPort(0, 60); // Sets the bottom scale.
         graphView.setManualYAxisBounds(20, -20); // Sets the Y-Axis Bounds.
-        graphView.getGraphViewStyle().setGridColor(Color.BLACK); // BLACK GRID color.
+        graphView.getGraphViewStyle().setGridColor(Color.TRANSPARENT);
+        graphView.setBackgroundColor(Color.TRANSPARENT);
+        graphView.getGraphViewStyle().setVerticalLabelsWidth(0);
+        graphView.getGraphViewStyle().setHorizontalLabelsColor(Color.TRANSPARENT);
+        graphView.getGraphViewStyle().setNumHorizontalLabels(0);
+        graphView.getGraphViewStyle().setNumVerticalLabels(0);
+        graphView.getGraphViewStyle().setVerticalLabelsColor(Color.TRANSPARENT);
 
         // Replaces x/y-axis labels with blanks.
         graphView.setHorizontalLabels(new String[] {"", "", "", "", "", "", "", "", "", "", "", "", "",

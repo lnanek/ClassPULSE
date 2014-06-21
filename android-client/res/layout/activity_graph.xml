@@ -93,8 +93,16 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"
+            android:background="@drawable/grid_opaque_tiled"
             >
-
+<!--  
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/grid_opaque_tiled"
+				android:scaleType="center"                
+                />
+-->            
             <LinearLayout
                 android:id="@+id/graph_container"
                 android:layout_width="match_parent"
