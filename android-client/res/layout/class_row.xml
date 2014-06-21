@@ -4,7 +4,9 @@
     android:layout_height="100dp"
     android:background="#007e7a"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal" 
+    android:keepScreenOn="true" 
+    >
 
     <ImageView
         android:id="@+id/class_icon"

@@ -84,6 +84,9 @@ public class GraphActivity extends BaseActivity {
 	private boolean setup;
 
 	private boolean recentlyTriggered;
+
+	@InjectView(R.id.root)
+	private View root;
 	
 	@InjectView(R.id.minusOnePleaseWait)
 	private View minusOnePleaseWait;
@@ -202,7 +205,9 @@ public class GraphActivity extends BaseActivity {
 		public void onSendSuccess(final Object resultObject) {
 			final Graph result = (Graph) resultObject;
 			Log.i(LOG_TAG, "onSendSuccess result = " + result);			
-			GraphActivity.this.graph = result;;
+			GraphActivity.this.graph = result;
+			// Don't force the screen on after the first time we see the data
+			root.setKeepScreenOn(false);
             updateUi();
 		}
 
@@ -294,6 +299,10 @@ public class GraphActivity extends BaseActivity {
 			enableButtons();
 			minusOnePleaseWait.setVisibility(View.GONE);
 			plusOnePleaseWait.setVisibility(View.GONE);
+			
+			if (null != tracker && resumed && hasWindowFocus()) {
+				tracker.onResume();
+			}
 		}
 	};
 
@@ -325,6 +334,9 @@ public class GraphActivity extends BaseActivity {
 		
 		AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
 		animation.setDuration(TRIGGER_BREAK_MS); 
+		if (null != tracker) {
+			tracker.onPause();
+		}
 		plusOnePleaseWait.startAnimation(animation);
 
 		audioManager.playSoundEffect(Sounds.SUCCESS);
@@ -367,6 +379,11 @@ public class GraphActivity extends BaseActivity {
 
 		recentlyTriggered = true;
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
+		
+		if (null != tracker) {
+			tracker.onPause();
+		}
+		
 		disableButtons();
 
 		minusOnePleaseWait.setVisibility(View.VISIBLE);
@@ -459,8 +476,9 @@ public class GraphActivity extends BaseActivity {
 	@Override
 	public boolean onGenericMotionEvent(MotionEvent event) {
 		Log.i(LOG_TAG, "onGenericMotionEvent");
-
-		swipes.onGenericMotionEvent(event);
+		if ( null != swipes ) {
+			swipes.onGenericMotionEvent(event);
+		}
 		return super.onGenericMotionEvent(event);
 	}
 
@@ -520,7 +538,12 @@ public class GraphActivity extends BaseActivity {
 		super.onResume();
 		resumed = true;
 		setupOrCleanup();
+
+		// Wake up screen
 		screenWaker.onResume();
+		
+		// But let screen turn off, immersion will keep our activity up
+		screenWaker.onPause();
 	}
 
 	@Override
@@ -538,7 +561,6 @@ public class GraphActivity extends BaseActivity {
 		super.onPause();
 		resumed = false;
 		setupOrCleanup();
-		screenWaker.onPause();
 	}
 
 	/**

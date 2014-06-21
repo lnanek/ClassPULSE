@@ -89,6 +89,8 @@ public class FilteredOrientationTracker implements SensorEventListener {
 
 	private Listener mListener;
 	
+	private boolean listening;
+	
 	public FilteredOrientationTracker(final Context aContext, Listener aListener) {
 
 		mListener = aListener;
@@ -123,6 +125,7 @@ public class FilteredOrientationTracker implements SensorEventListener {
 		// unregister sensor listeners to prevent the activity from draining the
 		// device's battery.
 		mSensorManager.unregisterListener(this);
+		listening = false;
 	}
 
 	public void onResume() {
@@ -133,6 +136,10 @@ public class FilteredOrientationTracker implements SensorEventListener {
 	// This function registers sensor listeners for the accelerometer,
 	// magnetometer and gyroscope.
 	public void initListeners() {
+		if ( listening ) {
+			return;
+		}
+		listening = true;
 		mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_UI);
 

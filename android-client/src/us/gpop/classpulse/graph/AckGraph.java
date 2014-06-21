@@ -82,8 +82,11 @@ public class AckGraph {
         graphView.addSeries(new GraphViewSeries(ackData)); // Adds the data into the graph.
         graphView.setViewPort(0, 60); // Sets the bottom scale.
         graphView.setManualYAxisBounds(20, -20); // Sets the Y-Axis Bounds.
-        graphView.getGraphViewStyle().setGridColor(Color.BLACK); // BLACK GRID color.
+        graphView.getGraphViewStyle().setGridColor(Color.parseColor("#6a6a6a")); // Dark gray GRID color.
 
+        graphView.getGraphViewStyle().setVerticalLabelsWidth(0);
+        //graphView.getGraphViewStyle().
+        
         // Replaces x/y-axis labels with blanks.
         graphView.setHorizontalLabels(new String[] {"", "", "", "", "", "", "", "", "", "", "", "", "",
                 "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
