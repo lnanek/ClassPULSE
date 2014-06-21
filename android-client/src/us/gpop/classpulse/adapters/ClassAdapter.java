@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import us.gpop.classpulse.GraphActivity;
 import us.gpop.classpulse.R;
-import us.gpop.classpulse.network.ClassModel;
 import us.gpop.classpulse.network.ClassStatus;
 import android.content.Context;
 import android.content.Intent;

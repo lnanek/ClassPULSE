@@ -6,7 +6,6 @@ import java.util.List;
 import us.gpop.classpulse.adapters.ClassAdapter;
 import us.gpop.classpulse.network.ApiClient;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
-import us.gpop.classpulse.network.ClassModel;
 import us.gpop.classpulse.network.ClassStatus;
 import android.app.Activity;
 import android.content.Intent;
