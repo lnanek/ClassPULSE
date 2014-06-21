@@ -63,6 +63,7 @@ public class ClassAdapter extends ArrayAdapter<ClassStatus> {
 			});
 		} else {
 			viewHolder.className.setText(classObj.className);
+			viewHolder.classIcon.setBackgroundResource(R.drawable.icon_book);
 			convertView.setOnClickListener(new OnClickListener() {
 
 				@Override
