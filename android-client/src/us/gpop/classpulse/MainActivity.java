@@ -269,7 +269,11 @@ public class MainActivity extends RoboActivity {
 	};
 
 	private void onUnderstand() {
-		Log.i(LOG_TAG, "onUnderstand");
+		Log.i(LOG_TAG, "onUnderstand");			
+		if (recentlyTriggered) {
+			audioManager.playSoundEffect(Sounds.ERROR);
+			return;
+		}
 
 		recentlyTriggered = true;
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
@@ -304,7 +308,11 @@ public class MainActivity extends RoboActivity {
 	}
 
 	private void onDontUnderstand() {
-		Log.i(LOG_TAG, "onDontUnderstand");
+		Log.i(LOG_TAG, "onDontUnderstand");	
+		if (recentlyTriggered) {
+			audioManager.playSoundEffect(Sounds.DISALLOWED);
+			return;
+		}
 
 		recentlyTriggered = true;
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
