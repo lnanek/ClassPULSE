@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 
 	private static final String LOG_TAG = MainActivity.class.getSimpleName();
 	
-	private Handler handler = new Handler();
+	private Handler handler;
 
 	private LocationTracker location;
 	
@@ -128,6 +128,7 @@ public class MainActivity extends Activity {
 		public void onSendSuccess(ClassStatus result) {
 			Log.i(LOG_TAG, "onSendSuccess result = " + result);
 			MainActivity.this.classStatus = result;
+			updateUi();	
 		}
 
 		@Override
