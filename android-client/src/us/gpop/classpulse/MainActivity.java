@@ -12,11 +12,11 @@ import us.gpop.classpulse.device.SwipeDetector;
 import us.gpop.classpulse.network.ApiClient;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
 import us.gpop.classpulse.network.ClassStatus;
+import us.gpop.classpulse.network.Graph;
 import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -166,9 +166,14 @@ public class MainActivity extends RoboActivity {
 	private ApiClientListener clientListener = new ApiClientListener() {
 
 		@Override
-		public void onSendSuccess(ClassStatus result) {
+		public void onSendSuccess(Graph result) {
 			Log.i(LOG_TAG, "onSendSuccess result = " + result);
-			MainActivity.this.classStatus = result;
+
+			if ( null == result || null == result.graph || result.graph.isEmpty() ) {
+				return;
+			}
+			
+			MainActivity.this.classStatus = result.graph.get(result.graph.size() - 1);
 			updateUi();
 		}
 
@@ -370,9 +375,9 @@ public class MainActivity extends RoboActivity {
 		understandCountView.setText("Understand: " + understandCount);
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
 		if (null != classStatus) {
-			understandCountTotalView.setText("Total understand: " + classStatus.understandTotal);
-			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.dontUnderstandTotal);
-			userCountView.setText(Integer.toString(classStatus.studentsTotal));
+			understandCountTotalView.setText("Total understand: " + classStatus.totalUnderstand);
+			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.totalDontUnderstand);
+			userCountView.setText(Integer.toString(classStatus.totalStudents));
 		}
 	}
 

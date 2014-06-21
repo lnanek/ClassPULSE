@@ -10,14 +10,16 @@ public class ClassStatus {
 	
 	private static transient final Gson gson = new Gson();
 
-	public int dontUnderstandTotal;
+	public String id;
 	
-	public int understandTotal;
+	public String time;
 	
-	public int studentsTotal;
+	public int totalUnderstand;
 	
-	public String className;
-
+	public int totalDontUnderstand;
+	
+	public int totalStudents;
+	
 	@Override
 	public String toString() {
 		return gson.toJson(this);

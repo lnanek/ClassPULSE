@@ -21,14 +21,14 @@ import com.google.gson.Gson;
 public class ApiClient {
 
 	public interface ApiClientListener {
-		void onSendSuccess(ClassStatus result);
+		void onSendSuccess(Graph result);
 
 		void onSendFail();
 	}
 
 	private static final String LOG_TAG = ApiClient.class.getSimpleName();
 
-	public static final String UPLOAD_URL = "http://gpop-server.com/classpulse/post.php";
+	public static final String UPLOAD_URL = "http://gpop-server.com/classpulse/graph.php";
 
 	private final Gson gson = new Gson();
 	
@@ -110,7 +110,7 @@ public class ApiClient {
 					Log.d(LOG_TAG, "Parsing: " + returnedJson);
 										
 					// Deliver success with parsed response
-					final ClassStatus result = gson.fromJson (returnedJson, ClassStatus.class );
+					final Graph result = gson.fromJson (returnedJson, Graph.class );
 					uiHandler.post(new Runnable() {
 						@Override
 						public void run() {
