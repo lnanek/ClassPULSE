@@ -17,6 +17,7 @@ import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,9 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import com.google.android.glass.media.Sounds;
+import com.google.inject.Inject;
 
 public class MainActivity extends RoboActivity {
 
@@ -117,6 +121,9 @@ public class MainActivity extends RoboActivity {
 	private String className = "ADV 320F";
 
 	private Graph graph;
+	
+	@Inject
+	private AudioManager audioManager;
 
 	private Runnable pollServer = new Runnable() {
 		@Override
@@ -269,6 +276,8 @@ public class MainActivity extends RoboActivity {
 		glassStatus.setText("Sent understood!");
 		disableButtons();
 
+		audioManager.playSoundEffect(Sounds.SUCCESS);
+		
 		understandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
 		updateUi();
@@ -276,13 +285,21 @@ public class MainActivity extends RoboActivity {
 
 	private void enableButtons() {
 		if (!Build.MODEL.toUpperCase().contains("GLASS")) {
-			androidButtons.setVisibility(View.VISIBLE);
+			androidButtons.setAlpha(1f);
+			understandButton.setClickable(true);
+			understandButton.setEnabled(true);
+			dontUnderstandButton.setClickable(true);
+			dontUnderstandButton.setEnabled(true);
 		}
 	}
 
 	private void disableButtons() {
 		if (!Build.MODEL.toUpperCase().contains("GLASS")) {
-			androidButtons.setVisibility(View.INVISIBLE);
+			androidButtons.setAlpha(0.2f);
+			understandButton.setClickable(false);
+			understandButton.setEnabled(false);
+			dontUnderstandButton.setClickable(false);
+			dontUnderstandButton.setEnabled(false);
 		}
 	}
 
@@ -294,6 +311,8 @@ public class MainActivity extends RoboActivity {
 		disableButtons();
 		glassStatus.setText("Sent don't understand!");
 
+		audioManager.playSoundEffect(Sounds.ERROR);
+		
 		dontUnderstandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
 		updateUi();
