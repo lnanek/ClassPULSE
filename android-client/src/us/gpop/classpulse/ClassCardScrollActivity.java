@@ -49,6 +49,9 @@ public class ClassCardScrollActivity extends Activity implements
 		} else {
 			setContentView(R.layout.card_loader);
 		}
+		
+
+		client.getClassList();
 	}	
 
 	@Override
@@ -62,7 +65,6 @@ public class ClassCardScrollActivity extends Activity implements
 		super.onResume();
 		screenWaker.onResume();
 		
-		client.getClassList();
 	}
 
 	private class ClassCardScrollAdapter extends CardScrollAdapter {

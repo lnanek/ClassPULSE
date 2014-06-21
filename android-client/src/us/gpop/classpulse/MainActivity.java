@@ -29,13 +29,15 @@ public class MainActivity extends BaseActivity {
 		}
 		setContentView(R.layout.activity_main);
 		listView = (ListView) findViewById(R.id.class_list);
+		
+
+		client.getClassList();	
 	};
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		client.getClassList();		
+			
 	}
 
 	private ApiClientListener classListListener = new ApiClientListener() {

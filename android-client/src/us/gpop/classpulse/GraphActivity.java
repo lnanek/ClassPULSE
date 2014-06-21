@@ -223,9 +223,16 @@ public class GraphActivity extends BaseActivity {
 
 	private ApiClient client = new ApiClient(clientListener);
 
+	private static final boolean PROF = false;
+	
 	private FilteredOrientationTracker.Listener trackerListener = new FilteredOrientationTracker.Listener() {
 		@Override
 		public void onUpdate(float[] gyro, float[] gyroSum) {
+			
+			if ( PROF ) {
+				return;
+			}
+			
 			 //Log.i(LOG_TAG, "xGyro = " + gyro[1] + " xGyroSum = "
 			 //+ gyroSum[1] + " yGyro = " + gyro[0] + " yGyroSum = " +
 			 //gyroSum[0]);
