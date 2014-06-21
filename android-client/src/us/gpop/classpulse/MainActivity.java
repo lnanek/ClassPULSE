@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -45,6 +47,14 @@ public class MainActivity extends Activity {
 	
 	private int dontUnderstandCount;
 	
+	private View glassInstructions;
+	
+	private View androidButtons;
+
+	private View understandButton;
+
+	private View dontUnderstandButton;
+	
 	private ApiClient client = new ApiClient();
 	
 	private DetectorListener detectorListener = new DetectorListener() {
@@ -54,14 +64,12 @@ public class MainActivity extends Activity {
 		}
 		@Override
 		public void onSwipeForwardOrVolumeUp() {
-			understandCount++;
-			updateUi();
+			onUnderstand();
 		}
 
 		@Override
 		public void onSwipeBackOrVolumeDown() {
-			dontUnderstandCount++;
-			updateUi();
+			onDontUnderstand();
 		}
 		@Override
 		public void onTap() {
@@ -90,19 +98,27 @@ public class MainActivity extends Activity {
 			// Look left and right 
 			if ( Math.abs(gyroSum[0]) > NOD_TRIGGER_SUM) {
 				gyroSum[0] = 0;
-				understandCount++;
-				client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
-				updateUi();
+				onUnderstand();
 			}
 			
 			if ( Math.abs(gyroSum[1]) > SHAKE_TRIGGER_SUM) {
 				gyroSum[1] = 0;
-				dontUnderstandCount++;
-				client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
-				updateUi();
+				onDontUnderstand();
 			}
 		}
 	};
+	
+	private void onUnderstand() {
+		understandCount++;
+		client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
+		updateUi();		
+	}
+	
+	private void onDontUnderstand() {
+		dontUnderstandCount++;
+		client.sendToServer(understandCount, dontUnderstandCount, location, email, "ADV 320F", clientListener);
+		updateUi();		
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +129,22 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);	
 		understandCountView = (TextView) findViewById(R.id.understandCount);
 		dontUnderstandCountView = (TextView) findViewById(R.id.dontUnderstandCount);
+		glassInstructions = findViewById(R.id.glassInstructions);
+		androidButtons = findViewById(R.id.androidButtons);
+		understandButton = findViewById(R.id.understandButton);
+		understandButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onUnderstand();
+			}
+		});
+		dontUnderstandButton = findViewById(R.id.dontUnderstandButton);
+		dontUnderstandButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onDontUnderstand();
+			}
+		});
 		
 		email = DeviceEmail.get(this);
 		Log.i(LOG_TAG, "user email = " + email);
@@ -122,8 +154,10 @@ public class MainActivity extends Activity {
 		if (Build.MODEL.toUpperCase().contains("GLASS")) {
 				Log.d(LOG_TAG, "Glass detected, tracking side touch pad events...");
 			swipes = GlassSetup.setup(detectorListener, this);
+			androidButtons.setVisibility(View.GONE);
 		} else {
 				Log.d(LOG_TAG, "Not Glass: " + Build.MODEL);
+				glassInstructions.setVisibility(View.GONE);
 		}
 	}
 		

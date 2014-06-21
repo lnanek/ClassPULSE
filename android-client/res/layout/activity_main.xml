@@ -96,6 +96,7 @@
     </LinearLayout>
 
 	<LinearLayout 
+	    android:id="@+id/glassInstructions"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal"
@@ -114,5 +115,32 @@
 	        android:textColor="#FFF"
 	        />    
     </LinearLayout>
+    
+	<LinearLayout 
+	    android:id="@+id/androidButtons"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:paddingTop="5dp"
+	    >    
+	    <Button
+	    	android:id="@+id/understandButton"
+	        android:layout_width="0px"
+	        android:layout_height="wrap_content"   
+	        android:layout_weight="1"  
+	        android:text="I Understand"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />    
+	    <Button
+	    	android:id="@+id/dontUnderstandButton"
+	        android:layout_width="0px"
+	        android:layout_height="wrap_content"   
+	        android:layout_weight="1"  
+	        android:text="I Don't Understand"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />    
+    </LinearLayout>	
         
 </LinearLayout>
