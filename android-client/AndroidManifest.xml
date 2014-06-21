@@ -46,6 +46,10 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/voice_prompt" />
         </activity>
+        <activity
+            android:name="us.gpop.classpulse.CreateClassActivity"
+            android:theme="@android:style/Theme.Holo.NoActionBar" >
+        </activity>
 </application>
 
 </manifest>

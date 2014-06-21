@@ -2,6 +2,7 @@ package us.gpop.classpulse.adapters;
 
 import java.util.ArrayList;
 
+import us.gpop.classpulse.CreateClassActivity;
 import us.gpop.classpulse.GraphActivity;
 import us.gpop.classpulse.R;
 import us.gpop.classpulse.network.ClassStatus;
@@ -56,9 +57,8 @@ public class ClassAdapter extends ArrayAdapter<ClassStatus> {
 
 				@Override
 				public void onClick(View v) {
-					// TODO: implement screen to add a new class
-					Toast.makeText(getContext(), "Coming soon!",
-							Toast.LENGTH_SHORT).show();
+					context.startActivity(new Intent(context,
+							CreateClassActivity.class));
 				}
 			});
 		} else {
