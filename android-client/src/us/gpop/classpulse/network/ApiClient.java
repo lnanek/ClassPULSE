@@ -1,4 +1,4 @@
-package us.gpop.classpulse;
+package us.gpop.classpulse.network;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import us.gpop.classpulse.sensors.LocationTracker;
 import android.util.Log;
 
 import com.google.gson.Gson;

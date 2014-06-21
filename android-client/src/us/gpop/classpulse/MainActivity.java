@@ -1,6 +1,14 @@
 package us.gpop.classpulse;
 
-import us.gpop.classpulse.ApiClient.ApiClientListener;
+import us.gpop.classpulse.device.Detector;
+import us.gpop.classpulse.device.DetectorListener;
+import us.gpop.classpulse.device.DeviceEmail;
+import us.gpop.classpulse.device.ScreenWaker;
+import us.gpop.classpulse.device.SwipeDetector;
+import us.gpop.classpulse.network.ApiClient;
+import us.gpop.classpulse.network.ApiClient.ApiClientListener;
+import us.gpop.classpulse.sensors.FilteredOrientationTracker;
+import us.gpop.classpulse.sensors.LocationTracker;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;

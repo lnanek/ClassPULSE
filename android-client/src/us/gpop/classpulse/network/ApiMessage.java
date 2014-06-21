@@ -1,4 +1,4 @@
-package us.gpop.classpulse;
+package us.gpop.classpulse.network;
 
 
 public class ApiMessage {

@@ -1,4 +1,4 @@
-package us.gpop.classpulse;
+package us.gpop.classpulse.device;
 
 import android.content.Context;
 import android.util.Log;

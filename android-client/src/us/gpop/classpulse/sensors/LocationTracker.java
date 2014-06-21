@@ -1,4 +1,4 @@
-package us.gpop.classpulse;
+package us.gpop.classpulse.sensors;
 
 import java.util.List;
 

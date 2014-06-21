@@ -21,7 +21,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  ************************************************************************************/
 
-package us.gpop.classpulse;
+package us.gpop.classpulse.sensors;
 
 import java.util.Timer;
 import java.util.TimerTask;
