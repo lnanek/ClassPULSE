@@ -16,6 +16,7 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal"
 	    android:paddingBottom="5dp"
+	    android:gravity="center"
 	    >    
 	    <TextView
 	        android:id="@+id/classTitle"
@@ -30,6 +31,12 @@
 	        android:layout_height="0px"      
 	        android:layout_weight="1"  
 	        />	
+	    <ImageView
+	        android:layout_width="34px"
+	        android:layout_height="34px"
+	        android:layout_marginRight="5dp"
+	        android:src="@drawable/head_icon"	        
+	        />
 	    <TextView
 	        android:id="@+id/userCount"
 	        android:layout_width="wrap_content"
