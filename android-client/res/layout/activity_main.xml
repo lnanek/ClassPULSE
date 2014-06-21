@@ -93,6 +93,36 @@
 	        android:layout_weight="1"  
 	        />
     
+	    
+	    <TextView
+	        android:id="@+id/understandCountTotal"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Total Understand: 0"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />
+	    
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />
+	    
+	    <TextView
+	        android:id="@+id/dontUnderstandCountTotal"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Total Don't: 0"
+	        android:textSize="30dp"
+	        android:textColor="#FFF"
+	        />
+	    
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />
     </LinearLayout>
 
 	<LinearLayout 

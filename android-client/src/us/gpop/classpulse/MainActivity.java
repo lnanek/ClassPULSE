@@ -6,6 +6,7 @@ import us.gpop.classpulse.device.DeviceEmail;
 import us.gpop.classpulse.device.ScreenWaker;
 import us.gpop.classpulse.device.SwipeDetector;
 import us.gpop.classpulse.network.ApiClient;
+import us.gpop.classpulse.network.ServerResponse;
 import us.gpop.classpulse.network.ApiClient.ApiClientListener;
 import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
@@ -50,6 +51,10 @@ public class MainActivity extends Activity {
 	private TextView understandCountView;
 	
 	private TextView dontUnderstandCountView;
+
+	private TextView understandCountTotalView;
+	
+	private TextView dontUnderstandCountTotalView;
 	
 	private int understandCount;
 	
@@ -64,6 +69,8 @@ public class MainActivity extends Activity {
 	private View dontUnderstandButton;
 	
 	private ApiClient client = new ApiClient();
+	
+	private ServerResponse result;
 	
 	private DetectorListener detectorListener = new DetectorListener() {
 		@Override
@@ -87,8 +94,9 @@ public class MainActivity extends Activity {
 	private ApiClientListener clientListener = new ApiClientListener() {
 
 		@Override
-		public void onSendSuccess() {
-			Log.i(LOG_TAG, "onSendSuccess");
+		public void onSendSuccess(ServerResponse result) {
+			Log.i(LOG_TAG, "onSendSuccess result = " + result);
+			MainActivity.this.result = result;
 		}
 
 		@Override
@@ -137,6 +145,8 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);	
 		understandCountView = (TextView) findViewById(R.id.understandCount);
 		dontUnderstandCountView = (TextView) findViewById(R.id.dontUnderstandCount);
+		dontUnderstandCountTotalView = (TextView) findViewById(R.id.dontUnderstandCountTotal);
+		understandCountTotalView = (TextView) findViewById(R.id.understandCountTotal);
 		glassInstructions = findViewById(R.id.glassInstructions);
 		androidButtons = findViewById(R.id.androidButtons);
 		understandButton = findViewById(R.id.understandButton);
@@ -178,6 +188,10 @@ public class MainActivity extends Activity {
 	private void updateUi() {
 		understandCountView.setText("Understand: " + understandCount);
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
+		if (null != result) {
+			understandCountTotalView.setText("Total understand: " + result.understandTotal);
+			dontUnderstandCountTotalView.setText("Total don't: " + result.dontUnderstandTotal);
+		}
 	}
 
 	@Override
