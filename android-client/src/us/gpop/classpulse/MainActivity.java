@@ -67,6 +67,8 @@ public class MainActivity extends Activity {
 	
 	private TextView userCountView;
 	
+	private View titleBar;
+	
 	private TextView classTitle;
 	
 	private int understandCount;
@@ -202,6 +204,7 @@ public class MainActivity extends Activity {
 		}
 		
 		setContentView(R.layout.activity_main);	
+		titleBar = findViewById(R.id.titleBar);
 		understandCountView = (TextView) findViewById(R.id.understandCount);
 		dontUnderstandCountView = (TextView) findViewById(R.id.dontUnderstandCount);
 		dontUnderstandCountTotalView = (TextView) findViewById(R.id.dontUnderstandCountTotal);
@@ -236,6 +239,7 @@ public class MainActivity extends Activity {
 				Log.d(LOG_TAG, "Glass detected, tracking side touch pad events...");
 			swipes = GlassSetup.setup(detectorListener, this);
 			androidButtons.setVisibility(View.GONE);
+			titleBar.setVisibility(View.GONE);
 		} else {
 				Log.d(LOG_TAG, "Not Glass: " + Build.MODEL);
 				glassInstructions.setVisibility(View.GONE);

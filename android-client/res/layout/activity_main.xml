@@ -5,10 +5,46 @@
     android:orientation="vertical"
     android:keepScreenOn="true"
     android:background="#007e7a"
-    android:paddingTop="5dp"
     android:paddingBottom="5dp"
     >
 
+	<LinearLayout 
+	    android:id="@+id/titleBar"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:paddingTop="10dp"
+	    android:paddingBottom="10dp"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"
+	    android:background="#000"
+	    android:gravity="center"
+	    >  
+	    <View
+	        android:layout_width="34px"
+	        android:layout_height="34px"
+	        />	  
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />	
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/logo"	        
+	        />	   
+	    <View
+	        android:layout_width="0px"
+	        android:layout_height="0px"      
+	        android:layout_weight="1"  
+	        />	 
+	    <ImageView
+	        android:layout_width="34px"
+	        android:layout_height="34px"
+	        android:src="@drawable/button_expander"	        
+	        />
+	</LinearLayout>
 	<LinearLayout 
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
