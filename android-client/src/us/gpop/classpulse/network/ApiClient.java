@@ -2,11 +2,14 @@ package us.gpop.classpulse.network;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -17,11 +20,12 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class ApiClient {
 
 	public interface ApiClientListener {
-		void onSendSuccess(Graph result);
+		void onSendSuccess(Object result);
 
 		void onSendFail();
 	}
@@ -29,6 +33,8 @@ public class ApiClient {
 	private static final String LOG_TAG = ApiClient.class.getSimpleName();
 
 	public static final String UPLOAD_URL = "http://gpop-server.com/classpulse/graph.php";
+
+	public static final String CLASS_LIST_URL = "http://gpop-server.com/classpulse/list-classes.php";
 
 	private final Gson gson = new Gson();
 	
@@ -135,6 +141,41 @@ public class ApiClient {
 			}
 		});
 		uploadThread.start();
+	}
+	
+
+	public void getClassList() {
+		final Thread getClassListThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final HttpGet httpGet = new HttpGet(CLASS_LIST_URL);
+					final HttpResponse response = defaultHttpClient.execute(httpGet);
+					final int statusCode = response.getStatusLine().getStatusCode();
+					if (HttpStatus.SC_OK != statusCode) {
+						Log.d(LOG_TAG, "There was a problem retrieving, response code: " + statusCode);
+						deliverErrorOnUiThread();
+						return;
+					}
+					final InputStream is = response.getEntity().getContent();
+					final String returnedString = IOUtils.toString(is, "UTF-8");
+					Log.d(LOG_TAG, "Server returned: " + returnedString);
+					Type type = new TypeToken<List<ClassStatus>>(){}.getType();
+					final List<ClassStatus> result =  gson.fromJson(returnedString, type);     
+					uiHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							isSending = false;
+							listener.onSendSuccess(result);
+						}						
+					});		
+				} catch (Exception e) {
+					Log.d(LOG_TAG, "There was a problem retrieving: " + e.toString());
+					deliverErrorOnUiThread();
+				}
+			}
+		});
+		getClassListThread.start();
 	}
 	
 	private void deliverErrorOnUiThread() {
