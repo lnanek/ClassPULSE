@@ -95,39 +95,48 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical"   
 	    android:layout_weight="1"  
-	    android:background="@drawable/grid"
+	    android:background="@drawable/grid_opaque"
+	    android:gravity="center"
 	    > 	
 	    <TextView
 	        android:id="@+id/understandCount"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:text="Understand: 0"
 	        android:textSize="20dp"
 	        android:textColor="#FFF"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
 	        />
 	    <TextView
 	        android:id="@+id/dontUnderstandCount"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:text="Don't understand: 0"
 	        android:textSize="20dp"
 	        android:textColor="#FFF"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
 	        />
 	    <TextView
 	        android:id="@+id/understandCountTotal"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:text="Total Understand: 0"
 	        android:textSize="20dp"
 	        android:textColor="#FFF"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
 	        />
 	    <TextView
 	        android:id="@+id/dontUnderstandCountTotal"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:text="Total Don't: 0"
 	        android:textSize="20dp"
 	        android:textColor="#FFF"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
 	        />
     </LinearLayout>
 
@@ -178,7 +187,7 @@
 	        android:layout_weight="1"  
 	        android:text="I don't"
 	        android:textSize="20dp"
-	        android:textColor="#000"
+	        android:textColor="#FFF"
 	        android:background="#303c41"
 	        android:gravity="center"
 	        android:padding="30dp"
