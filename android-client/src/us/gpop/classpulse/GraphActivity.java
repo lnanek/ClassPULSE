@@ -2,7 +2,6 @@ package us.gpop.classpulse;
 
 import java.util.ArrayList;
 
-import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import us.gpop.classpulse.device.Detector;
 import us.gpop.classpulse.device.DetectorListener;
@@ -30,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -322,6 +322,10 @@ public class GraphActivity extends BaseActivity {
 		handler.postDelayed(resetTriggered, TRIGGER_BREAK_MS);
 		plusOnePleaseWait.setVisibility(View.VISIBLE);
 		disableButtons();
+		
+		AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
+		animation.setDuration(TRIGGER_BREAK_MS); 
+		plusOnePleaseWait.startAnimation(animation);
 
 		audioManager.playSoundEffect(Sounds.SUCCESS);
 		
@@ -366,6 +370,10 @@ public class GraphActivity extends BaseActivity {
 		disableButtons();
 
 		minusOnePleaseWait.setVisibility(View.VISIBLE);
+
+		AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
+		animation.setDuration(TRIGGER_BREAK_MS); 
+		minusOnePleaseWait.startAnimation(animation);
 		
 		audioManager.playSoundEffect(Sounds.ERROR);
 		
