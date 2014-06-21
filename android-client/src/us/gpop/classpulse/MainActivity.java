@@ -3,6 +3,7 @@ package us.gpop.classpulse;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	
@@ -18,16 +19,33 @@ public class MainActivity extends Activity {
 	
 	private boolean setup;
 	
+	private TextView understandCountView;
+	
+	private TextView dontUnderstandCountView;
+	
+	private int understandCount;
+	
+	private int dontUnderstandCount;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(LOG_TAG, "onCreate");
 		screenWaker = new ScreenWaker(this);
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);		
+		setContentView(R.layout.activity_main);	
+		understandCountView = (TextView) findViewById(R.id.understandCount);
+		dontUnderstandCountView = (TextView) findViewById(R.id.dontUnderstandCount);
 		
 		email = DeviceEmail.get(this);
 		Log.i(LOG_TAG, "user email = " + email);
+		
+		updateUi();
+	}
+	
+	private void updateUi() {
+		understandCountView.setText("Understand: " + understandCount);
+		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
 	}
 
 	@Override

@@ -1,13 +1,46 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:keepScreenOn="true"
-    tools:context="us.gpop.classpulse.MainActivity$PlaceholderFragment" >
+    android:background="#000"
+    >
 
+    <View
+        android:layout_width="0px"
+        android:layout_height="0px"      
+        android:layout_weight="1"  
+        />
+    
     <TextView
+        android:id="@+id/understandCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
-</RelativeLayout>
+        android:text="Understand: 0"
+        android:textSize="30dp"
+        android:textColor="#FFF"
+        />
+    
+    <View
+        android:layout_width="0px"
+        android:layout_height="0px"      
+        android:layout_weight="1"  
+        />
+    
+    <TextView
+        android:id="@+id/dontUnderstandCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't understand: 0"
+        android:textSize="30dp"
+        android:textColor="#FFF"
+        />
+    
+    <View
+        android:layout_width="0px"
+        android:layout_height="0px"      
+        android:layout_weight="1"  
+        />
+    
+</LinearLayout>
