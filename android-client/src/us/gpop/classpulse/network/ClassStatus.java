@@ -20,6 +20,8 @@ public class ClassStatus {
 	
 	public int totalStudents;
 	
+	public String className;
+	
 	@Override
 	public String toString() {
 		return gson.toJson(this);
