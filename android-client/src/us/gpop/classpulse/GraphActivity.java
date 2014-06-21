@@ -62,9 +62,9 @@ public class GraphActivity extends BaseActivity {
 	// How long to wait before checking the server for the latest totals
 	private static final int POLL_PERIOD_MS = 5 * 1000;
 
-	private static final float NOD_TRIGGER_SUM = 10;
+	private static final float NOD_TRIGGER_SUM = 8;
 
-	private static final float SHAKE_TRIGGER_SUM = 10;
+	private static final float SHAKE_TRIGGER_SUM = 8;
 
 	private static final String LOG_TAG = GraphActivity.class.getSimpleName();
 
@@ -80,7 +80,9 @@ public class GraphActivity extends BaseActivity {
 
 	private String email;
 
-	private HeadMotion lastHeadMotion;
+	private HeadMotion lastVerticalHeadMotion;
+	
+	private HeadMotion lastHorizontalHeadMotion;
 
 	private boolean recentlyTriggered;
 
@@ -239,57 +241,68 @@ public class GraphActivity extends BaseActivity {
 			if (Math.abs(gyroSum[0]) > NOD_TRIGGER_SUM && gyroSum[0] < 0) {
 				Log.i(LOG_TAG, "head up");
 				newHeadMotion = HeadMotion.UP;
+				gyroSum[0] = 0;
 			} else if (Math.abs(gyroSum[0]) > NOD_TRIGGER_SUM && gyroSum[0] > 0) {
 				Log.i(LOG_TAG, "head down");
 				newHeadMotion = HeadMotion.DOWN;
+				gyroSum[0] = 0;
 
 				// Shake head left and right
 			} else if (Math.abs(gyroSum[1]) > SHAKE_TRIGGER_SUM && gyroSum[1] < 0) {
 				Log.i(LOG_TAG, "head left");
 				newHeadMotion = HeadMotion.LEFT;
+				gyroSum[1] = 0;
 			} else if (Math.abs(gyroSum[1]) > SHAKE_TRIGGER_SUM && gyroSum[1] > 0) {
 				Log.i(LOG_TAG, "head right");
 				newHeadMotion = HeadMotion.RIGHT;
+				gyroSum[1] = 0;
 			}
 
 			// If we did, clear the movement sum
 			if (newHeadMotion == null) {
 				return;
 			}
-			gyroSum[0] = 0;
-			gyroSum[1] = 0;
 
-			Log.i(LOG_TAG, "last = " + lastHeadMotion + ", new = " + newHeadMotion);
+			Log.i(LOG_TAG, "lastVerticalHeadMotion = "
+					+ lastVerticalHeadMotion 
+					+ "lastHorizontalHeadMotion = "
+							+ lastHorizontalHeadMotion 
+					+ ", new = " + newHeadMotion);
 
 			// If we just did the opposite head motion, trigger a nod or shake
-			if (HeadMotion.LEFT == lastHeadMotion &&
+			if (HeadMotion.LEFT == lastHorizontalHeadMotion &&
 					HeadMotion.RIGHT == newHeadMotion) {
 				Log.i(LOG_TAG, "left right");
-				lastHeadMotion = null;
+				lastHorizontalHeadMotion = null;
 				onDontUnderstand();
 				return;
-			} else if (HeadMotion.RIGHT == lastHeadMotion &&
+			} else if (HeadMotion.RIGHT == lastHorizontalHeadMotion &&
 					HeadMotion.LEFT == newHeadMotion) {
 				Log.i(LOG_TAG, "right left");
-				lastHeadMotion = null;
+				lastHorizontalHeadMotion = null;
 				onDontUnderstand();
 				return;
-			} else if (HeadMotion.UP == lastHeadMotion &&
+				
+			} else if (HeadMotion.UP == lastVerticalHeadMotion &&
 					HeadMotion.DOWN == newHeadMotion) {
 				Log.i(LOG_TAG, "up down");
-				lastHeadMotion = null;
+				lastVerticalHeadMotion = null;
 				onUnderstand();
 				return;
-			} else if (HeadMotion.DOWN == lastHeadMotion &&
+			} else if (HeadMotion.DOWN == lastVerticalHeadMotion &&
 					HeadMotion.UP == newHeadMotion) {
 				Log.i(LOG_TAG, "down left");
-				lastHeadMotion = null;
+				lastVerticalHeadMotion = null;
 				onUnderstand();
 				return;
 			}
 
 			// Log.i(LOG_TAG, "saving motion to check against next");
-			lastHeadMotion = newHeadMotion;
+			if (HeadMotion.LEFT == newHeadMotion || HeadMotion.RIGHT == newHeadMotion) {
+				lastHorizontalHeadMotion = newHeadMotion;
+			} else {
+				lastVerticalHeadMotion = newHeadMotion;				
+			}
 		}
 	};
 
