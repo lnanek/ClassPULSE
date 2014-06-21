@@ -1,5 +1,7 @@
 package us.gpop.classpulse;
 
+import java.util.ArrayList;
+
 import us.gpop.classpulse.device.Detector;
 import us.gpop.classpulse.device.DetectorListener;
 import us.gpop.classpulse.device.DeviceEmail;
@@ -12,9 +14,11 @@ import us.gpop.classpulse.sensors.FilteredOrientationTracker;
 import us.gpop.classpulse.sensors.LocationTracker;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -62,6 +66,8 @@ public class MainActivity extends Activity {
 	private TextView dontUnderstandCountTotalView;
 	
 	private TextView userCountView;
+	
+	private TextView classTitle;
 	
 	private int understandCount;
 	
@@ -179,6 +185,22 @@ public class MainActivity extends Activity {
 		screenWaker = new ScreenWaker(this);
 		
 		super.onCreate(savedInstanceState);
+		
+		// Parse response to voice prompt, if any
+		final Intent intent = getIntent();
+		if ( null != intent ) {
+			final Bundle extras = intent.getExtras();
+			if ( null != extras ) {
+				if (extras.containsKey(RecognizerIntent.EXTRA_RESULTS)) {
+					final ArrayList<String> voiceResults = 
+							extras.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
+					if (!voiceResults.isEmpty()) {
+						className = voiceResults.get(0);
+					}
+				}				
+			}			
+		}
+		
 		setContentView(R.layout.activity_main);	
 		understandCountView = (TextView) findViewById(R.id.understandCount);
 		dontUnderstandCountView = (TextView) findViewById(R.id.dontUnderstandCount);
@@ -188,6 +210,9 @@ public class MainActivity extends Activity {
 		glassInstructions = findViewById(R.id.glassInstructions);
 		androidButtons = findViewById(R.id.androidButtons);
 		understandButton = findViewById(R.id.understandButton);
+		classTitle = (TextView) findViewById(R.id.classTitle);
+		classTitle.setText(className);
+		
 		understandButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
