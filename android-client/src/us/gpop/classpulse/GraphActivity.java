@@ -48,9 +48,9 @@ public class GraphActivity extends BaseActivity {
 		LEFT, RIGHT, UP, DOWN;
 	}
 	
-	private static final int DOING_GOOD_BAR_COLOR = Color.parseColor("#007e7a");
+	private static final int DOING_GOOD_BAR_COLOR = Color.parseColor("#000000");
 
-	private static final int DOING_BAD_BAR_COLOR = Color.parseColor("#cc9900");
+	private static final int DOING_BAD_BAR_COLOR = Color.parseColor("#851a00");
 
 	// How long after triggering an understand or don't until you can trigger
 	// again.
@@ -448,6 +448,7 @@ public class GraphActivity extends BaseActivity {
 		dontUnderstandCountView.setText("Don't understand: " + dontUnderstandCount);
 		
 		if ( null == graph || null == graph.graph || graph.graph.isEmpty() ) {
+			Log.i(LOG_TAG, "updateUi - no graph data");
 			return;
 		}
 		final ClassStatus classStatus = graph.graph.get(graph.graph.size() - 1);
@@ -456,9 +457,31 @@ public class GraphActivity extends BaseActivity {
 			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.totalDontUnderstand);
 			userCountView.setText(Integer.toString(classStatus.totalStudents));
 			
+			
 			if ( classStatus.totalDontUnderstand > classStatus.totalUnderstand) {
-				glassInstructions.setBackgroundColor(DOING_BAD_BAR_COLOR);				
+				final int difference = classStatus.totalDontUnderstand - classStatus.totalUnderstand;
+	
+				Log.i(LOG_TAG, "updateUi doing bad - " + difference);
+				
+				// Full visible bad color if over 20 don't understand more than understand.
+				if ( difference >= 20 ) {
+					Log.i(LOG_TAG, "updateUi - doing full bad");
+					glassInstructions.setBackgroundColor(DOING_BAD_BAR_COLOR);
+				} else {
+					// As approach 20, more and more visibile
+					final float ratio = difference / 20f;
+					Log.i(LOG_TAG, "updateUi - doing bad ratio - " + ratio);
+					final int alpha = (int) (255 * ratio);
+					Log.i(LOG_TAG, "updateUi - doing bad alpha - " + alpha);
+					final int color =Color.argb(
+							alpha, 
+							Color.red(DOING_BAD_BAR_COLOR), 
+							Color.green(DOING_BAD_BAR_COLOR), 
+							Color.blue(DOING_BAD_BAR_COLOR));
+					glassInstructions.setBackgroundColor(color);					
+				}				
 			} else {
+				Log.i(LOG_TAG, "updateUi - doing good");
 				glassInstructions.setBackgroundColor(DOING_GOOD_BAR_COLOR);
 			}
 		}

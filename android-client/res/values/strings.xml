@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ClassPULSE</string>
-    <string name="glass_instructions">Nod: I get it    Shake: I don\'t!</string>
+    <string name="glass_instructions">Nod - I get it    Shake - I don\'t!</string>
     <string name="voice_prompt">check this class</string>
 
 </resources>

@@ -160,9 +160,15 @@
 	    android:layout_height="wrap_content"
 	    android:orientation="horizontal"
 	    android:paddingTop="5dp"
-	    android:paddingRight="10dp"
-    	android:background="#007e7a"
+	    android:paddingBottom="5dp"
+	    android:paddingRight="20px"
+	    android:paddingLeft="20px"
 	    >    
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/glass_logo_classpulse"	        
+	        />
 	    <View
 	        android:layout_width="0px"
 	        android:layout_height="0px"      
@@ -172,8 +178,17 @@
 	    	android:id="@+id/glassStatus"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="@string/glass_instructions"
-	        android:textSize="30dp"
+	        android:text="Nod - I get it"
+	        android:textSize="20px"
+	    	android:paddingRight="40px"
+	        android:textColor="#FFF"
+	        />    
+	    <TextView
+	    	android:id="@+id/glassStatus"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Shake- I don't"
+	        android:textSize="20px"
 	        android:textColor="#FFF"
 	        />    
     </LinearLayout>
