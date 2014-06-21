@@ -39,8 +39,8 @@
 	        android:layout_weight="1"  
 	        />	 
 	    <ImageView
-	        android:layout_width="34px"
-	        android:layout_height="34px"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
 	        android:src="@drawable/button_expander"	        
 	        />
 	</LinearLayout>
@@ -56,8 +56,8 @@
 	    android:gravity="center"
 	    >    
 	    <ImageView
-	        android:layout_width="34px"
-	        android:layout_height="34px"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
 	        android:layout_marginRight="20dp"
 	        android:src="@drawable/icon_book"	        
 	        />
@@ -75,8 +75,8 @@
 	        android:layout_weight="1"  
 	        />	
 	    <ImageView
-	        android:layout_width="34px"
-	        android:layout_height="34px"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
 	        android:layout_marginRight="20dp"
 	        android:src="@drawable/icon_human"	        
 	        />

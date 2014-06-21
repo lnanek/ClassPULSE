@@ -376,11 +376,11 @@ public class GraphActivity extends BaseActivity {
 		// Parse response to voice prompt, if any
 		final Intent intent = getIntent();
 		if (null != intent) {
-			final Bundle extras = intent.getExtras();
-			if (null != extras) {
-				if (extras.containsKey(RecognizerIntent.EXTRA_RESULTS)) {
+			intentExtras = intent.getExtras();
+			if (null != intentExtras) {
+				if (intentExtras.containsKey(RecognizerIntent.EXTRA_RESULTS)) {
 					final ArrayList<String> voiceResults =
-							extras.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
+							intentExtras.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
 					if (!voiceResults.isEmpty()) {
 						className = voiceResults.get(0);
 					}
@@ -423,13 +423,10 @@ public class GraphActivity extends BaseActivity {
         ackLineGraph.setUpGraph(this);
         LinearLayout layout = (LinearLayout) findViewById(R.id.graph_container);
         layout.addView(ackLineGraph.graphView);
-        
 
 		if(intentExtras != null) {
 			classTitle.setText(intentExtras.getString("className"));
-			userCountView.setText(intentExtras.getString("totalStudents"));
-			understandCountTotalView.setText("Total understand: " + intentExtras.getString("totalUnderstand"));
-			dontUnderstandCountTotalView.setText("Total don't: " + intentExtras.getString("totalDontUnderstand"));
+			userCountView.setText(Integer.toString(intentExtras.getInt("totalStudents")));
 		}
 	}
 
