@@ -2,8 +2,18 @@
   <library name="graphview-3.1">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/android-client/libs/graphview-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/commons-io-2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/gson-2.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/guice-3.0-no_aop.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/javax.inject-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/roboguice-2.0.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/android-client/libs/commons-io-2.4-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/gson-2.2.4-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android-client/libs/roboguice-2.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

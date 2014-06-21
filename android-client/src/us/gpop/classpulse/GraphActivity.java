@@ -189,7 +189,7 @@ public class GraphActivity extends BaseActivity {
 			final Graph result = (Graph) resultObject;
 			Log.i(LOG_TAG, "onSendSuccess result = " + result);			
 			GraphActivity.this.graph = result;;
-			updateUi();
+            updateUi();
 		}
 
 		@Override
@@ -311,8 +311,11 @@ public class GraphActivity extends BaseActivity {
 		
 		understandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
-		ackLineGraph.refreshGraph(this, true); // A "YAY/I UNDERSTAND" response.
-		updateUi();
+
+        // OLD CODE. MANUAL UPDATE OF GRAPH FROM LOCAL USER.
+		//ackLineGraph.refreshGraph(this, true); // A "YAY/I UNDERSTAND" response.
+
+        updateUi();
 	}
 
 	private void enableButtons() {
@@ -351,8 +354,11 @@ public class GraphActivity extends BaseActivity {
 		
 		dontUnderstandCount++;
 		client.sendToServer(understandCount, dontUnderstandCount, location, email, className);
-		ackLineGraph.refreshGraph(this, false); // A "NAY/DON'T UNDERSTAND" response.
-		updateUi();
+
+        // OLD CODE. SHOWS DATA FROM LOCAL USER.
+        //ackLineGraph.refreshGraph(this, false); // A "NAY/DON'T UNDERSTAND" response.
+
+        updateUi();
 	}
 
 	@Override
@@ -448,6 +454,9 @@ public class GraphActivity extends BaseActivity {
 			dontUnderstandCountTotalView.setText("Total don't: " + classStatus.totalDontUnderstand);
 			userCountView.setText(Integer.toString(classStatus.totalStudents));
 		}
+
+        // GRAPH UPDATE
+        ackLineGraph.refreshLiveGraph(this, classStatus.totalUnderstand, classStatus.totalDontUnderstand); // Refresh the graph.
 	}
 
 	@Override
