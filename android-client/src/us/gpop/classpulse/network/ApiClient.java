@@ -16,7 +16,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import us.gpop.classpulse.sensors.LocationTracker;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -38,8 +37,6 @@ public class ApiClient {
 
 	private final Gson gson = new Gson();
 	
-	private final DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
-		
 	private boolean isSending;
 	
 	private Handler uiHandler = new Handler();
@@ -86,7 +83,7 @@ public class ApiClient {
 				try {
 					final StringEntity params = new StringEntity(json);
 					httpPost.setEntity(params);
-					response = defaultHttpClient.execute(httpPost);
+					response = new DefaultHttpClient().execute(httpPost);
 					
 					final int statusCode = response.getStatusLine().getStatusCode();
 					Log.d(LOG_TAG, "Response status: " + statusCode);
@@ -126,14 +123,16 @@ public class ApiClient {
 					Log.d(LOG_TAG, "There was a problem uploading", e);
 					deliverErrorOnUiThread();
 				} finally {
+					/*
 					if ( null != entity ) {
 						try {
 							entity.consumeContent();
 						} catch (IOException e) {
 							Log.d(LOG_TAG, "Error closing connection", e);
 						}
-					}					
-					httpPost.abort();
+					}		
+					*/			
+					//httpPost.abort();
 				}
 			}
 		});
@@ -145,16 +144,18 @@ public class ApiClient {
 		final Thread getClassListThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				HttpEntity entity = null;
 				try {
 					final HttpGet httpGet = new HttpGet(CLASS_LIST_URL);
-					final HttpResponse response = defaultHttpClient.execute(httpGet);
+					final HttpResponse response = new DefaultHttpClient().execute(httpGet);
 					final int statusCode = response.getStatusLine().getStatusCode();
 					if (HttpStatus.SC_OK != statusCode) {
 						Log.d(LOG_TAG, "There was a problem retrieving, response code: " + statusCode);
 						deliverErrorOnUiThread();
 						return;
 					}
-					final InputStream is = response.getEntity().getContent();
+					entity = response.getEntity();
+					final InputStream is = entity.getContent();
 					final String returnedString = IOUtils.toString(is, "UTF-8");
 					Log.d(LOG_TAG, "Server returned: " + returnedString);
 					Type type = new TypeToken<List<ClassStatus>>(){}.getType();
@@ -169,6 +170,17 @@ public class ApiClient {
 				} catch (Exception e) {
 					Log.d(LOG_TAG, "There was a problem retrieving: " + e.toString());
 					deliverErrorOnUiThread();
+				} finally {
+					/*
+					if ( null != entity ) {
+						try {
+							entity.consumeContent();
+						} catch (IOException e) {
+							Log.d(LOG_TAG, "Error closing connection", e);
+						}
+					}	
+					*/				
+					//httpPost.abort();
 				}
 			}
 		});
